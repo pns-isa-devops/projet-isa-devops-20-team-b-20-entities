@@ -1,41 +1,43 @@
 package fr.polytech.entities;
 
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
+import javax.persistence.OneToMany;
 
+@Entity
 public class Drone implements Serializable {
 
-    private static final long serialVersionUID = -6254437064440335306L;
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int droneId;
+    private int id;
 
-    @NotNull
-    private DroneStatus droneStatus;
+    @Enumerated(EnumType.STRING)
+    private DroneStatus droneStatus = DroneStatus.AVAILABLE;
 
-    private Set<TimeSlot> timeSlots;
+    @OneToMany(cascade = { CascadeType.MERGE })
+    private Set<TimeSlot> timeSlots = new TreeSet<>();
 
     public Drone() {
-        // Default : the drone newly created is available
         // Necessary for JPA instantiation process
-        this.droneStatus = DroneStatus.AVAILABLE;
-        this.timeSlots = new TreeSet<>();
     }
 
-    public int getDroneId() {
-        return droneId;
+    public int getId() {
+        return id;
     }
 
-    public void setDroneId(int droneId) {
-        this.droneId = droneId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public DroneStatus getDroneStatus() {
@@ -65,18 +67,32 @@ public class Drone implements Serializable {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + id;
+        return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this)
+        if (this == obj) {
             return true;
-
-        if (obj != null)
-            return (obj.hashCode() == Objects.hash(this.droneId, this.droneStatus));
-
-        return false;
+        }
+        if (!(obj instanceof Drone)) {
+            return false;
+        }
+        Drone other = (Drone) obj;
+        return this.id == other.id;
     }
 
+    @Override
+    public String toString() {
+        String result = getClass().getSimpleName() + " ";
+        result += "id: " + id;
+        if (droneStatus != null)
+            result += ", drone: " + droneStatus;
+        if (timeSlots != null)
+            result += ", parcel: " + timeSlots;
+        return result;
+    }
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+
+    <persistence-unit name="drone_delivery_persistence_unit" transaction-type="JTA">
+
+        <jta-data-source>DroneDeliveryDataSource</jta-data-source>
+
+        <class>fr.polytech.entities.Delivery</class>
+        <class>fr.polytech.entities.Drone</class>
+        <class>fr.polytech.entities.Parcel</class>
+        <class>fr.polytech.entities.TimeSlot</class>
+
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+        <properties>
+            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)" />
+            <property name="openjpa.RuntimeUnenhancedClasses" value="unsupported" />
+        </properties>
+
+    </persistence-unit>
+
+</persistence>

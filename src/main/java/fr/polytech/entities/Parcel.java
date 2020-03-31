@@ -2,14 +2,20 @@ package fr.polytech.entities;
 
 import java.io.Serializable;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
+@Entity
 public class Parcel implements Serializable {
 
-    private static final long serialVersionUID = -4748724748697106351L;
+    private static final long serialVersionUID = 1L;
 
-    @NotNull
-    private String parcelNumber;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
 
     @NotNull
     private String address;
@@ -20,12 +26,22 @@ public class Parcel implements Serializable {
     @NotNull
     private String customerName;
 
-    public String getParcelNumber() {
-        return parcelNumber;
+    public Parcel() {
+        // Necessary for JPA instantiation process
     }
 
-    public void setParcelNumber(String parcelNumber) {
-        this.parcelNumber = parcelNumber;
+    public Parcel(String address, String carrier, String customerName) {
+        this.address = address;
+        this.carrier = carrier;
+        this.customerName = customerName;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getAddress() {
@@ -61,27 +77,21 @@ public class Parcel implements Serializable {
             return false;
         }
         Parcel other = (Parcel) obj;
-        if (parcelNumber != null) {
-            if (!parcelNumber.equals(other.parcelNumber)) {
-                return false;
-            }
-        }
-        return true;
+        return this.id == other.id;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((parcelNumber == null) ? 0 : parcelNumber.hashCode());
+        result = prime * result + id;
         return result;
     }
 
     @Override
     public String toString() {
         String result = getClass().getSimpleName() + " ";
-        if (parcelNumber != null && !parcelNumber.trim().isEmpty())
-            result += ", parcelNumber: " + parcelNumber;
+        result += "id: " + id;
         if (address != null && !address.trim().isEmpty())
             result += ", address: " + address;
         if (carrier != null && !carrier.trim().isEmpty())

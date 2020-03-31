@@ -2,26 +2,39 @@ package fr.polytech.entities;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
+@Entity
 public class Delivery implements Serializable {
 
-    private static final long serialVersionUID = -5281177622173992243L;
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
 
     @NotNull
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Drone drone;
 
     @NotNull
+    @OneToOne(cascade = CascadeType.MERGE)
     private Parcel parcel;
 
-    @NotNull
-    private String deliveryNumber;
-
-    @NotNull
-    private DeliveryStatus status;
+    @Enumerated(EnumType.STRING)
+    private DeliveryStatus status = DeliveryStatus.NOT_DELIVERED;
 
     public Delivery() {
-        this.status = DeliveryStatus.NOT_DELIVERED;
+        // Necessary for JPA instantiation process
     }
 
     /**
@@ -29,7 +42,6 @@ public class Delivery implements Serializable {
      * @param drone to be assigned to the delivery
      */
     public Delivery(Drone drone) {
-        this.status = DeliveryStatus.NOT_DELIVERED;
         this.drone = drone;
     }
 
@@ -49,12 +61,12 @@ public class Delivery implements Serializable {
         this.parcel = parcel;
     }
 
-    public String getDeliveryNumber() {
-        return deliveryNumber;
+    public int getId() {
+        return id;
     }
 
-    public void setDeliveryNumber(String deliveryNumber) {
-        this.deliveryNumber = deliveryNumber;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public DeliveryStatus getStatus() {
@@ -68,12 +80,11 @@ public class Delivery implements Serializable {
     @Override
     public String toString() {
         String result = getClass().getSimpleName() + " ";
+        result += "id: " + id;
         if (drone != null)
             result += ", drone: " + drone;
         if (parcel != null)
             result += ", parcel: " + parcel;
-        if (deliveryNumber != null && !deliveryNumber.trim().isEmpty())
-            result += ", deliveryNumber: " + deliveryNumber;
         if (status != null)
             result += ", status: " + status;
         return result;
@@ -88,19 +99,15 @@ public class Delivery implements Serializable {
             return false;
         }
         Delivery other = (Delivery) obj;
-        if (deliveryNumber != null) {
-            if (!deliveryNumber.equals(other.deliveryNumber)) {
-                return false;
-            }
-        }
-        return true;
+        return this.id == other.id;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        return prime * result + ((deliveryNumber == null) ? 0 : deliveryNumber.hashCode());
+        result = prime * result + id;
+        return result;
     }
 
 }
