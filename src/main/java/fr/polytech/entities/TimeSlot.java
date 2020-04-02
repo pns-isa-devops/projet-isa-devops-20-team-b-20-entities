@@ -2,12 +2,14 @@ package fr.polytech.entities;
 
 import java.util.GregorianCalendar;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
@@ -21,6 +23,9 @@ public class TimeSlot implements Comparable<TimeSlot> {
     @NotNull
     private GregorianCalendar date;
 
+    @ManyToOne
+    private Drone drone;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private TimeState state;
@@ -32,10 +37,16 @@ public class TimeSlot implements Comparable<TimeSlot> {
         // Necessary for JPA instantiation process
     }
 
-    public TimeSlot(GregorianCalendar date, TimeState state, Delivery delivery) {
+    public TimeSlot(GregorianCalendar date) {
         this.date = date;
-        this.state = state;
-        this.delivery = delivery;
+    }
+
+    public Drone getDrone() {
+        return drone;
+    }
+
+    public void setDrone(Drone drone) {
+        this.drone = drone;
     }
 
     public int getId() {
@@ -79,7 +90,10 @@ public class TimeSlot implements Comparable<TimeSlot> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + id + ((date == null) ? 0 : date.hashCode());
+        result = prime * result + (getDrone() == null ? 0 : getDrone().getDroneId().hashCode());
+        result = prime * result + (getDate() == null ? 0 : getDate().hashCode());
+        result = prime * result + (getState() == null ? 0 : getState().hashCode());
+        result = prime * result + (getDelivery() == null ? 0 : getDelivery().hashCode());
         return result;
     }
 
@@ -92,23 +106,31 @@ public class TimeSlot implements Comparable<TimeSlot> {
             return false;
         }
         TimeSlot other = (TimeSlot) obj;
-        if (date != null) {
-            if (!date.equals(other.date) && this.id == other.id) {
-                return false;
-            }
+        if (getDate() != null ? !getDate().equals(other.getDate()) : other.getDate() != null) {
+            return false;
         }
-        return this.id == other.id;
+        if (getDrone() != null ? !getDrone().getDroneId().equals(other.getDrone().getDroneId())
+                : other.getDrone() != null) {
+            return false;
+        }
+        if (getDelivery() != null ? !getDelivery().getDeliveryId().equals(other.getDelivery().getDeliveryId())
+                : other.getDelivery() != null) {
+            return false;
+        }
+        return getState() == other.getState();
     }
 
     @Override
     public String toString() {
         String result = getClass().getSimpleName() + " ";
         if (date != null)
-            result += "date: " + date;
+            result += "date: " + date.getTime().toString();
         if (state != null)
             result += ", state: " + state;
+        if (drone != null)
+            result += "drone: " + drone.getDroneId();
         if (delivery != null)
-            result += ", delivery: " + delivery;
+            result += ", delivery: " + delivery.getDeliveryId();
         return result;
     }
 

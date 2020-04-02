@@ -1,8 +1,8 @@
 package fr.polytech.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -12,6 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @Entity
 public class Drone implements Serializable {
@@ -22,22 +24,38 @@ public class Drone implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+    @NotNull
+    @Pattern(regexp = "([A-Z 0-9]){3}+", message = "Invalid drone id")
+    private String droneId;
+
     @Enumerated(EnumType.STRING)
     private DroneStatus droneStatus = DroneStatus.AVAILABLE;
 
-    @OneToMany(cascade = { CascadeType.MERGE })
-    private Set<TimeSlot> timeSlots = new TreeSet<>();
+    @OneToMany(cascade = { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "drone")
+    private Set<TimeSlot> timeSlots = new HashSet<>();
 
     public Drone() {
         // Necessary for JPA instantiation process
     }
 
-    public int getId() {
-        return id;
+    public Drone(String id) {
+        this.droneId = id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void add(TimeSlot slot) {
+        this.timeSlots.add(slot);
+    }
+
+    public String getDroneId() {
+        return droneId;
+    }
+
+    public void setDroneId(String droneId) {
+        this.droneId = droneId;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public DroneStatus getDroneStatus() {
@@ -69,7 +87,9 @@ public class Drone implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + id;
+        result = prime * result + (getDroneId() != null ? getDroneId().hashCode() : 0);
+        result = prime * result + (getDroneStatus() != null ? getDroneStatus().hashCode() : 0);
+        result = prime * result + (getTimeSlots() != null ? getTimeSlots().hashCode() : 0);
         return result;
     }
 
@@ -82,17 +102,24 @@ public class Drone implements Serializable {
             return false;
         }
         Drone other = (Drone) obj;
-        return this.id == other.id;
+        if (getDroneId() != null ? !getDroneId().equals(other.getDroneId()) : other.getDroneId() != null) {
+            return false;
+        }
+        if (getTimeSlots() != null ? !getTimeSlots().equals(other.getTimeSlots()) : other.getTimeSlots() != null) {
+            return false;
+        }
+        return getDroneStatus() == other.getDroneStatus();
     }
 
     @Override
     public String toString() {
         String result = getClass().getSimpleName() + " ";
-        result += "id: " + id;
+        if (droneId != null && !droneId.trim().isEmpty())
+            result += "droneId: " + droneId;
         if (droneStatus != null)
-            result += ", drone: " + droneStatus;
+            result += ", status: " + droneStatus;
         if (timeSlots != null)
-            result += ", parcel: " + timeSlots;
+            result += ", timeslots: " + timeSlots;
         return result;
     }
 }

@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @Entity
 public class Delivery implements Serializable {
@@ -23,6 +24,9 @@ public class Delivery implements Serializable {
     private int id;
 
     @NotNull
+    @Pattern(regexp = "([A-Z 0-9]){10}+", message = "Invalid delivery id")
+    private String deliveryId;
+
     @ManyToOne(cascade = CascadeType.MERGE)
     private Drone drone;
 
@@ -37,12 +41,16 @@ public class Delivery implements Serializable {
         // Necessary for JPA instantiation process
     }
 
-    /**
-     *
-     * @param drone to be assigned to the delivery
-     */
-    public Delivery(Drone drone) {
-        this.drone = drone;
+    public Delivery(String deliveryId) {
+        this.deliveryId = deliveryId;
+    }
+
+    public String getDeliveryId() {
+        return deliveryId;
+    }
+
+    public void setDeliveryId(String deliveryId) {
+        this.deliveryId = deliveryId;
     }
 
     public Drone getDrone() {
@@ -65,29 +73,12 @@ public class Delivery implements Serializable {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public DeliveryStatus getStatus() {
         return status;
     }
 
     public void setStatus(DeliveryStatus status) {
         this.status = status;
-    }
-
-    @Override
-    public String toString() {
-        String result = getClass().getSimpleName() + " ";
-        result += "id: " + id;
-        if (drone != null)
-            result += ", drone: " + drone;
-        if (parcel != null)
-            result += ", parcel: " + parcel;
-        if (status != null)
-            result += ", status: " + status;
-        return result;
     }
 
     @Override
@@ -99,15 +90,40 @@ public class Delivery implements Serializable {
             return false;
         }
         Delivery other = (Delivery) obj;
-        return this.id == other.id;
+        if (getDeliveryId() != null ? !getDeliveryId().equals(other.getDeliveryId()) : other.getDeliveryId() != null) {
+            return false;
+        }
+        if (getDrone() != null ? !getDrone().getDroneId().equals(other.getDrone().getDroneId())
+                : other.getDrone() != null) {
+            return false;
+        }
+        if (getParcel() != null ? !getParcel().equals(other.getParcel()) : other.getParcel() != null) {
+            return false;
+        }
+        return getStatus() == other.getStatus();
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + id;
+        result = prime * result + (getDeliveryId() != null ? getDeliveryId().hashCode() : 0);
+        result = prime * result + (getDrone() != null ? getDrone().getDroneId().hashCode() : 0);
+        result = prime * result + (getDeliveryId() != null ? getDeliveryId().hashCode() : 0);
         return result;
     }
 
+    @Override
+    public String toString() {
+        String result = getClass().getSimpleName() + " ";
+        if (deliveryId != null && !deliveryId.trim().isEmpty())
+            result += "deliveryId: " + deliveryId;
+        if (drone != null)
+            result += ", drone: " + drone.getDroneId();
+        if (parcel != null)
+            result += ", parcel: " + parcel;
+        if (status != null)
+            result += ", status: " + status;
+        return result;
+    }
 }
