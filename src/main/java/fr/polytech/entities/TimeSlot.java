@@ -2,7 +2,6 @@ package fr.polytech.entities;
 
 import java.util.GregorianCalendar;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;

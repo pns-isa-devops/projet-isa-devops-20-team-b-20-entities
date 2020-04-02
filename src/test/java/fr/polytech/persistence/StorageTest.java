@@ -10,12 +10,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.GregorianCalendar;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.UserTransaction;
 import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -23,7 +20,6 @@ import javax.validation.ValidatorFactory;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
