@@ -150,8 +150,7 @@ public class StorageTest extends AbstractEntitiesTest {
 
     @Test
     public void updateDrone() {
-        TimeSlot t = new TimeSlot(new GregorianCalendar());
-        t.setState(TimeState.REVIEW);
+        TimeSlot t = new TimeSlot(new GregorianCalendar(), TimeState.REVIEW);
         Drone dr = new Drone("123");
         dr.add(t);
         entityManager.persist(t);
@@ -171,8 +170,7 @@ public class StorageTest extends AbstractEntitiesTest {
 
     @Test
     public void removeDrone() {
-        TimeSlot t = new TimeSlot(new GregorianCalendar());
-        t.setState(TimeState.REVIEW);
+        TimeSlot t = new TimeSlot(new GregorianCalendar(), TimeState.REVIEW);
         Drone dr = new Drone("123");
         dr.add(t);
         entityManager.persist(t);
@@ -261,8 +259,7 @@ public class StorageTest extends AbstractEntitiesTest {
         entityManager.persist(de);
 
         de.setDrone(dr);
-        TimeSlot t = new TimeSlot(new GregorianCalendar(2020, 12, 12));
-        t.setState(TimeState.DELIVERY);
+        TimeSlot t = new TimeSlot(new GregorianCalendar(2020, 12, 12), TimeState.DELIVERY);
         // Flush Timeslot
         assertEquals(0, t.getId());
         entityManager.persist(t);
@@ -292,8 +289,7 @@ public class StorageTest extends AbstractEntitiesTest {
         entityManager.persist(de);
 
         de.setDrone(dr);
-        TimeSlot t = new TimeSlot(new GregorianCalendar(2020, 12, 12));
-        t.setState(TimeState.DELIVERY);
+        TimeSlot t = new TimeSlot(new GregorianCalendar(2020, 12, 12), TimeState.DELIVERY);
         // Flush Timeslot
         entityManager.persist(t);
         int id = t.getId();
@@ -326,8 +322,7 @@ public class StorageTest extends AbstractEntitiesTest {
         entityManager.persist(de);
 
         de.setDrone(dr);
-        TimeSlot t = new TimeSlot(new GregorianCalendar(2020, 12, 12));
-        t.setState(TimeState.DELIVERY);
+        TimeSlot t = new TimeSlot(new GregorianCalendar(2020, 12, 12), TimeState.DELIVERY);
         // Flush Timeslot
         entityManager.persist(t);
 

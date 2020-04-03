@@ -1,5 +1,6 @@
 package fr.polytech.entities;
 
+import java.io.Serializable;
 import java.util.GregorianCalendar;
 
 import javax.persistence.Entity;
@@ -13,7 +14,7 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class TimeSlot implements Comparable<TimeSlot> {
+public class TimeSlot implements Comparable<TimeSlot>, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,8 +37,9 @@ public class TimeSlot implements Comparable<TimeSlot> {
         // Necessary for JPA instantiation process
     }
 
-    public TimeSlot(GregorianCalendar date) {
+    public TimeSlot(GregorianCalendar date, TimeState timeState) {
         this.date = date;
+        this.state = timeState;
     }
 
     public Drone getDrone() {
