@@ -22,6 +22,12 @@ pipeline{
 				sh "mvn test"
 			}
 		}
+        stage('Mutations') {
+            steps {
+                echo 'PiTest Mutation'
+                sh 'mvn org.pitest:pitest-maven:mutationCoverage'
+            }
+        }
 		stage("Deploy") {
 			steps {
 				configFileProvider([configFile(fileId: MVN_SETTING_PROVIDER, variable: "MAVEN_SETTINGS")]) {
