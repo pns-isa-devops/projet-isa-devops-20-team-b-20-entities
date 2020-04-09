@@ -79,7 +79,7 @@ pipeline{
             when { not { branch 'master' } }
             steps {
                 script {
-                    def components = ['projet-isa-devops-20-team-b-20-shipment-component']
+                    def components = ['projet-isa-devops-20-team-b-20-shipment-component','projet-isa-devops-20-team-b-20-schedule-component','projet-isa-devops-20-team-b-20-drone-park-component','projet-isa-devops-20-team-b-20-warehouse-component']
                     for (int i = 0; i < components.size(); ++i) {
                         echo "Check dependency on ${components[i]}"
                         build job: "${components[i]}/develop",
