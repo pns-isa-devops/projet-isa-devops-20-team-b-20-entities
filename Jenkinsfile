@@ -6,6 +6,7 @@ pipeline{
     }
     environment {
         MVN_SETTING_PROVIDER = "3ec57b41-efe6-4628-a6c7-8be5f1c26d77"
+        COMPONENT = "projet-isa-devops-20-team-b-20-entities"
     }
     stages {
         stage("Compile") {
@@ -36,6 +37,14 @@ pipeline{
 				}
 			}
 		}
+        stage("Check Dependencies") {
+            when {
+                expression { env.GIT_BRANCH == 'develop' }
+            }
+            steps {
+                build job: 'projet-isa-devops-20-team-b-20-drone-delivery/develop', parameters: [booleanParam(name: 'UPDATE_BUILD', value: true)], wait: false
+            }
+        }
         stage('Sonarqube') {
             steps {
                 withSonarQubeEnv('Sonarqube_env') {
@@ -50,6 +59,22 @@ pipeline{
                     waitForQualityGate true
                 }
                 echo 'passed'
+            }
+        }
+        stage('Update snapshot dependencies') {
+            when { not { branch 'master' } }
+            steps {
+                script {
+                    def components = ['projet-isa-devops-20-team-b-20-shipment-component']
+                    for (int i = 0; i < components.size(); ++i) {
+                        echo "Check dependency on ${components[i]}"
+                        build job: "${components[i]}/develop",
+                            parameters: [string(name: 'DEPENDENCY', value: "${COMPONENT}"),
+                            string(name: 'VERSION', value: 'snapshot')],
+                            propagate: false,
+                            wait: false
+                    }
+                }
             }
         }
     }
