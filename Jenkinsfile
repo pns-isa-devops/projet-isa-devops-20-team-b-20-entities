@@ -1,3 +1,4 @@
+def gate = ""
 pipeline{
     agent any
     options {
@@ -55,10 +56,23 @@ pipeline{
         }
         stage('Quality Gate') {
             steps {
-                timeout(time: 1, unit: 'HOURS') {
-                    waitForQualityGate true
+                catchError(buildResult: "SUCCESS", stageResult: "FAILURE") {
+                    timeout(time: 1, unit: "HOURS") {
+                        waitForQualityGate true
+                    }
                 }
-                echo 'passed'
+            }
+            post{
+                success {
+                    script {
+                        gate = "\n - Quality gate was successful"
+                    }
+                }
+                failure {
+                    script {
+                        gate = "\n - Quality gate was failed"
+                    }
+                }
             }
         }
         stage('Update snapshot dependencies') {
@@ -91,9 +105,10 @@ pipeline{
             failOnError: true,
             color: 'good',
             token: env.SLACK_TOKEN,
-            message: 'Job: ' + env.JOB_NAME + ' with buildnumber ' + env.BUILD_NUMBER + ' was successful',
+            message: 'Job: ' + env.JOB_NAME + ' with buildnumber ' + env.BUILD_NUMBER + ' was successful' + gate,
             baseUrl: env.SLACK_WEBHOOK)
             echo "======== pipeline executed successfully ========"
+            sh 'mvn versions:commit'
         }
         failure {
             slackSend(
@@ -105,6 +120,7 @@ pipeline{
             message: 'Job: ' + env.JOB_NAME + ' with buildnumber ' + env.BUILD_NUMBER + ' was failed',
             baseUrl: env.SLACK_WEBHOOK)
             echo "======== pipeline execution failed========"
+            sh 'mvn versions:revert'
         }
     }
 }
