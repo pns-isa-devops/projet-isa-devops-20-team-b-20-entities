@@ -27,7 +27,7 @@ public class Delivery implements Serializable {
     @Pattern(regexp = "([A-Z 0-9]){10}+", message = "Invalid delivery id")
     private String deliveryId;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @OneToOne(cascade = CascadeType.MERGE)
     private Drone drone;
 
     @NotNull
