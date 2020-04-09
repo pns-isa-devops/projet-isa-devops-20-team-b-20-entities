@@ -4,14 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -27,6 +20,9 @@ public class Drone implements Serializable {
     @NotNull
     @Pattern(regexp = "([A-Z 0-9]){3}+", message = "Invalid drone id")
     private String droneId;
+
+    @OneToOne(cascade = CascadeType.MERGE)
+    private Delivery currentDelivery;
 
     @Enumerated(EnumType.STRING)
     private DroneStatus droneStatus = DroneStatus.AVAILABLE;
@@ -53,6 +49,15 @@ public class Drone implements Serializable {
     public void setDroneId(String droneId) {
         this.droneId = droneId;
     }
+
+    public Delivery getCurrentDelivery() {
+        return currentDelivery;
+    }
+
+    public void setCurrentDelivery(Delivery currentDelivery) {
+        this.currentDelivery = currentDelivery;
+    }
+
 
     public int getId() {
         return id;
