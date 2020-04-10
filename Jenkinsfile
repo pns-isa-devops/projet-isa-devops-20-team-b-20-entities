@@ -5,6 +5,11 @@ pipeline{
         disableConcurrentBuilds()
         timeout(time: 1, unit: "HOURS")
     }
+    parameters {
+        string(name: 'DEPENDENCY', defaultValue: '', description: 'dependency to update')
+        string(name: 'UPDATE_VERSION', defaultValue: '', description: 'version of the dependency')
+        choice(name: 'TYPE', choices: ['none', 'snapshot', 'release'], description: 'type of version to update')
+    }
     environment {
         MVN_SETTING_PROVIDER = "3ec57b41-efe6-4628-a6c7-8be5f1c26d77"
         COMPONENT = "projet-isa-devops-20-team-b-20-entities"
@@ -112,7 +117,7 @@ pipeline{
                                 echo "Check dependency on ${components[i]}"
                                 build job: "${components[i]}/develop",
                                     parameters: [string(name: 'DEPENDENCY', value: "${COMPONENT}"),
-                                    string(name: 'VERSION', value: "${CURRENT_VERSION}"),
+                                    string(name: "UPDATE_VERSION", value: "${CURRENT_VERSION}"),
                                     string(name: 'TYPE', value: 'snapshot')],
                                     propagate: false,
                                     wait: false
