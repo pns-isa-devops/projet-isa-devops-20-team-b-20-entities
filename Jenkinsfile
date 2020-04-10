@@ -77,10 +77,10 @@ pipeline{
         }
         stage('Update snapshot dependencies') {
             environment {
-                CURRENT_VERSION = '''${sh(
+                CURRENT_VERSION = """${sh(
                                     returnStdout: true,
-                                    script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout"
-                                )}'''
+                                    script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout'
+                                )}"""
             }
             when { not { branch 'master' } }
             steps {
