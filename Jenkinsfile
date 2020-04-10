@@ -8,93 +8,143 @@ pipeline{
     environment {
         MVN_SETTING_PROVIDER = "3ec57b41-efe6-4628-a6c7-8be5f1c26d77"
         COMPONENT = "projet-isa-devops-20-team-b-20-entities"
+        NEW_VERSION = """${sh(
+                            returnStdout: true,
+                            script: 'mvn help:evaluate -Dexpression=versions.${DEPENDENCY} -q -DforceStdout'
+                        )}"""
     }
     stages {
-        stage("Compile") {
-            steps {
-                configFileProvider([configFile(fileId: MVN_SETTING_PROVIDER, variable: "MAVEN_SETTINGS")]) {
-					echo "Compile module"
-					sh "mvn -s $MAVEN_SETTINGS clean compile"
-                }
-            }
-        }
-		stage("Tests") {
-			steps {
-				echo "Unit tests module"
-				sh "mvn test"
-			}
-		}
-        stage('Mutations') {
-            steps {
-                echo 'PiTest Mutation'
-                sh 'mvn org.pitest:pitest-maven:mutationCoverage'
-            }
-        }
-		stage("Deploy") {
-			steps {
-				configFileProvider([configFile(fileId: MVN_SETTING_PROVIDER, variable: "MAVEN_SETTINGS")]) {
-                    echo "Deployment into artifactory"
-                    sh "mvn -s $MAVEN_SETTINGS deploy"
-				}
-			}
-		}
-        stage("Check Dependencies") {
+        stage('New Version To check') {
             when {
-                expression { env.GIT_BRANCH == 'develop' }
-            }
-            steps {
-                build job: 'projet-isa-devops-20-team-b-20-drone-delivery/develop', parameters: [booleanParam(name: 'UPDATE_BUILD', value: true)], wait: false
-            }
-        }
-        stage('Sonarqube') {
-            steps {
-                withSonarQubeEnv('Sonarqube_env') {
-                    echo 'Sonar Analysis'
-                    sh 'mvn package sonar:sonar -Dsonar.pitest.mode=reuseReport'
+                allOf {
+                    expression { params.UPDATE_VERSION != NEW_VERSION }
                 }
             }
-        }
-        stage('Quality Gate') {
-            steps {
-                catchError(buildResult: "SUCCESS", stageResult: "FAILURE") {
-                    timeout(time: 1, unit: "HOURS") {
-                        waitForQualityGate true
+            stages {
+                stage("Snapshot revision") {
+                    when {
+                        allOf {
+                            expression { params.DEPENDENCY != '' }
+                            expression { params.TYPE == 'snapshot' }
+                        }
+                    }
+                    steps {
+                        sh "mvn versions:use-latest-versions -DallowSnapshots=true -DprocessParent=false -Dincludes=fr.unice.polytech.isadevops.dronedelivery:${params.DEPENDENCY}"
+                        script {
+                            update = "\n - Component need fix before update : ${params.DEPENDENCY}\n\t${params.UPDATE_VERSION} -> ${NEW_VERSION}"
+                        }
+                    }
+                }
+                stage("Compile") {
+                    steps {
+                        configFileProvider([configFile(fileId: MVN_SETTING_PROVIDER, variable: "MAVEN_SETTINGS")]) {
+                            echo "Compile module"
+                            sh "mvn -s $MAVEN_SETTINGS clean compile"
+                        }
+                    }
+                }
+                stage("Tests") {
+                    steps {
+                        echo "Unit tests module"
+                        sh "mvn test"
+                    }
+                }
+                stage('Mutations') {
+                    steps {
+                        echo 'PiTest Mutation'
+                        sh 'mvn org.pitest:pitest-maven:mutationCoverage'
+                    }
+                }
+                stage("Deploy") {
+                    steps {
+                        configFileProvider([configFile(fileId: MVN_SETTING_PROVIDER, variable: "MAVEN_SETTINGS")]) {
+                                echo "Deployment into artifactory"
+                                sh "mvn -s $MAVEN_SETTINGS deploy"
+                        }
+                    }
+                }
+                stage('Sonarqube') {
+                    steps {
+                        withSonarQubeEnv('Sonarqube_env') {
+                            echo 'Sonar Analysis'
+                            sh 'mvn package sonar:sonar -Dsonar.pitest.mode=reuseReport'
+                        }
+                    }
+                }
+                stage('Quality Gate') {
+                    steps {
+                        catchError(buildResult: "SUCCESS", stageResult: "FAILURE") {
+                            timeout(time: 1, unit: "HOURS") {
+                                waitForQualityGate true
+                            }
+                        }
+                    }
+                    post{
+                        success {
+                            script {
+                                gate = "\n - Quality gate was successful"
+                            }
+                        }
+                        failure {
+                            script {
+                                gate = "\n - Quality gate was failed"
+                            }
+                        }
+                    }
+                }
+                stage('Update snapshot dependencies') {
+                    environment {
+                        CURRENT_VERSION = """${sh(
+                                            returnStdout: true,
+                                            script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout'
+                                        )}"""
+                    }
+                    when {
+                        allOf {
+                            not { branch 'master' }
+                            expression { params.DEPENDENCY == '' }
+                        }
+                    }
+                    steps {
+                        script {
+                            def components = ['projet-isa-devops-20-team-b-20-shipment-component','projet-isa-devops-20-team-b-20-schedule-component','projet-isa-devops-20-team-b-20-drone-park-component','projet-isa-devops-20-team-b-20-warehouse-component']
+                            for (int i = 0; i < components.size(); ++i) {
+                                echo "Check dependency on ${components[i]}"
+                                build job: "${components[i]}/develop",
+                                    parameters: [string(name: 'DEPENDENCY', value: "${COMPONENT}"),
+                                    string(name: 'VERSION', value: "${CURRENT_VERSION}"),
+                                    string(name: 'TYPE', value: 'snapshot')],
+                                    propagate: false,
+                                    wait: false
+                            }
+                        }
+                    }
+                }
+                stage('Commit with new version') {
+                    when {
+                        allOf {
+                            expression { params.DEPENDENCY != '' }
+                            expression { params.TYPE == 'snapshot' }
+                            expression { params.UPDATE_VERSION != NEW_VERSION }
+                        }
+                    }
+                    steps {
+                        script {
+                            update = "\n - Component can be update : ${params.DEPENDENCY}\n\t${params.UPDATE_VERSION} -> ${NEW_VERSION}"
+                        }
                     }
                 }
             }
-            post{
-                success {
-                    script {
-                        gate = "\n - Quality gate was successful"
-                    }
-                }
-                failure {
-                    script {
-                        gate = "\n - Quality gate was failed"
-                    }
-                }
-            }
         }
-        stage('Update snapshot dependencies') {
-            environment {
-                CURRENT_VERSION = """${sh(
-                                    returnStdout: true,
-                                    script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout'
-                                )}"""
+        stage('No Update') {
+            when {
+                allOf {
+                    expression { params.UPDATE_VERSION == NEW_VERSION }
+                }
             }
-            when { not { branch 'master' } }
             steps {
                 script {
-                    def components = ['projet-isa-devops-20-team-b-20-shipment-component','projet-isa-devops-20-team-b-20-schedule-component','projet-isa-devops-20-team-b-20-drone-park-component','projet-isa-devops-20-team-b-20-warehouse-component']
-                    for (int i = 0; i < components.size(); ++i) {
-                        echo "Check dependency on ${components[i]}"
-                        build job: "${components[i]}/develop",
-                            parameters: [string(name: 'DEPENDENCY', value: "${COMPONENT}"),
-                            string(name: 'VERSION', value: "${CURRENT_VERSION}"),
-                            string(name: 'TYPE', value: 'snapshot')],
-                            propagate: false,
-                            wait: false
-                    }
+                    update = "\n - Component up to date : ${params.DEPENDENCY}\n\t${params.UPDATE_VERSION}"
                 }
             }
         }
