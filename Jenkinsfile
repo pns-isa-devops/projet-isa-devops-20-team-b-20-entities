@@ -76,6 +76,12 @@ pipeline{
             }
         }
         stage('Update snapshot dependencies') {
+            environment {
+                CURRENT_VERSION = '''${sh(
+                                    returnStdout: true,
+                                    script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout"
+                                )}'''
+            }
             when { not { branch 'master' } }
             steps {
                 script {
@@ -84,7 +90,8 @@ pipeline{
                         echo "Check dependency on ${components[i]}"
                         build job: "${components[i]}/develop",
                             parameters: [string(name: 'DEPENDENCY', value: "${COMPONENT}"),
-                            string(name: 'VERSION', value: 'snapshot')],
+                            string(name: 'VERSION', value: "${CURRENT_VERSION}"),
+                            string(name: 'TYPE', value: 'snapshot')],
                             propagate: false,
                             wait: false
                     }
