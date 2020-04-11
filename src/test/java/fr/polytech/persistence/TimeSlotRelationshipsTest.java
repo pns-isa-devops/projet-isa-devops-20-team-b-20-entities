@@ -40,8 +40,7 @@ public class TimeSlotRelationshipsTest extends AbstractEntitiesTest {
 
     @Before
     public void SetUp(){
-        timeSlot = new TimeSlot(new GregorianCalendar(2020, 11, 11));
-        timeSlot.setState(TimeState.DELIVERY);
+        timeSlot = new TimeSlot(new GregorianCalendar(2020, 11, 11), TimeState.DELIVERY);
         entityManager.persist(timeSlot);
     }
 

@@ -50,8 +50,7 @@ public class DroneRelationshipsTest extends AbstractEntitiesTest {
         assertEquals(0, drone.getTimeSlots().size());
 
         // Add a timeslot and check if it's in
-        TimeSlot t = new TimeSlot(new GregorianCalendar(2020, 12, 12));
-        t.setState(TimeState.DELIVERY);
+        TimeSlot t = new TimeSlot(new GregorianCalendar(2020, 12, 12), TimeState.DELIVERY);
         entityManager.persist(t);
         TimeSlot stored = (TimeSlot) entityManager.find(TimeSlot.class, t.getId());
         drone.getTimeSlots().add(stored);
@@ -63,8 +62,7 @@ public class DroneRelationshipsTest extends AbstractEntitiesTest {
         assertEquals(1,storedDrone.getTimeSlots().size());
 
         // Add a second timeslot
-        TimeSlot t2= new TimeSlot(new GregorianCalendar(2020, 11, 12));
-        t2.setState(TimeState.DELIVERY);
+        TimeSlot t2= new TimeSlot(new GregorianCalendar(2020, 11, 12), TimeState.DELIVERY);
         entityManager.persist(t2);
         TimeSlot stored2 = (TimeSlot) entityManager.find(TimeSlot.class, t2.getId());
         drone.getTimeSlots().add(stored2);
