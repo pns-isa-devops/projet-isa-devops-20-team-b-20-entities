@@ -35,7 +35,6 @@ public class Drone implements Serializable {
      */
     public Drone() {
         // Necessary for JPA instantiation process
-        this("000");
     }
 
     /**
