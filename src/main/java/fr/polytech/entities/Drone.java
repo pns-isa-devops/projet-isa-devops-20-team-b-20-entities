@@ -25,17 +25,27 @@ public class Drone implements Serializable {
     private Delivery currentDelivery;
 
     @Enumerated(EnumType.STRING)
-    private DroneStatus droneStatus = DroneStatus.AVAILABLE;
+    private DroneStatus droneStatus;
 
     @OneToMany(cascade = { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "drone")
-    private Set<TimeSlot> timeSlots = new HashSet<>();
+    private Set<TimeSlot> timeSlots;
 
+    /**
+     * Creates a drone of ID 000.
+     */
     public Drone() {
         // Necessary for JPA instantiation process
+        this("000");
     }
 
+    /**
+     * Creates a drone with the specified ID.
+     * @param id
+     */
     public Drone(String id) {
         this.droneId = id;
+        this.droneStatus = DroneStatus.AVAILABLE;
+        timeSlots = new HashSet<>();
     }
 
     public void add(TimeSlot slot) {
