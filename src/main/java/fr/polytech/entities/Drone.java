@@ -30,6 +30,18 @@ public class Drone implements Serializable {
     @OneToMany(cascade = { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "drone")
     private Set<TimeSlot> timeSlots;
 
+    private int flightTime;
+
+
+    public int getFlightTime() {
+        return flightTime;
+    }
+
+    public void setFlightTime(int flightTime) {
+        this.flightTime = flightTime;
+    }
+
+
     /**
      * Creates a drone of ID 000.
      */
@@ -45,6 +57,7 @@ public class Drone implements Serializable {
         this.droneId = id;
         this.droneStatus = DroneStatus.AVAILABLE;
         timeSlots = new HashSet<>();
+        this.flightTime = 0;
     }
 
     public void add(TimeSlot slot) {
