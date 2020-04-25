@@ -17,19 +17,15 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import fr.polytech.entities.*;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import arquillian.AbstractEntitiesTest;
-import fr.polytech.entities.Delivery;
-import fr.polytech.entities.Drone;
-import fr.polytech.entities.DroneStatus;
-import fr.polytech.entities.Parcel;
-import fr.polytech.entities.TimeSlot;
-import fr.polytech.entities.TimeState;
 
 /**
  * StorageTest
@@ -335,5 +331,97 @@ public class StorageTest extends AbstractEntitiesTest {
         assertNull(entityManager.find(TimeSlot.class, t.getId()));
         assertNotNull(entityManager.find(Drone.class, dr.getId()));
         assertNotNull(entityManager.find(Delivery.class, de.getId()));
+    }
+
+    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    @Test
+    public void storingDroneInformation() {
+        Drone dr = new Drone("123");
+        entityManager.persist(dr);
+        dr = entityManager.merge(dr);
+
+        DroneInformation droneInformation = new DroneInformation(new GregorianCalendar(2020, 11, 27),dr);
+        assertEquals(0, droneInformation.getId());
+        entityManager.persist(droneInformation);
+        int id = droneInformation.getId();
+        assertNotEquals(0, id);
+
+        DroneInformation stored = (DroneInformation) entityManager.find(DroneInformation.class, id);
+        assertEquals(droneInformation, stored);
+
+        stored.setOccupationRate(10.0);
+        entityManager.persist(stored);
+
+        DroneInformation stored2 = entityManager.merge(stored);
+        assertEquals(10.0,stored2.getOccupationRate(),0.001);
+    }
+
+    @Test
+    public void updateDroneInformation() {
+        Drone dr = new Drone("123");
+        entityManager.persist(dr);
+        dr = entityManager.merge(dr);
+
+        DroneInformation droneInformation = new DroneInformation(new GregorianCalendar(2020, 11, 27),dr);
+        entityManager.persist(droneInformation);
+
+        // Occupation rate
+        droneInformation.setOccupationRate(10.0);
+        entityManager.persist(droneInformation);
+
+        DroneInformation stored2 = entityManager.merge(droneInformation);
+        assertEquals(10.0,stored2.getOccupationRate(),0.001);
+
+        // Date
+        stored2.setDate(new GregorianCalendar(2020, 11, 28));
+        entityManager.persist(stored2);
+
+        DroneInformation stored3 = entityManager.merge(droneInformation);
+        assertEquals(new GregorianCalendar(2020, 11, 28),stored3.getDate());
+
+        // Drone
+        Drone dr2 = new Drone("234");
+        entityManager.persist(dr2);
+        dr2 = entityManager.merge(dr2);
+
+        assertNotEquals(dr2, stored3.getDrone());
+        stored3.setDrone(dr2);
+        entityManager.persist(stored3);
+        DroneInformation stored4 = entityManager.merge(stored3);
+
+        assertEquals(dr2,stored4.getDrone());
+
+    }
+
+    @Test
+    public void removeDroneInformation() {
+        Drone dr = new Drone("123");
+        entityManager.persist(dr);
+        dr = entityManager.merge(dr);
+
+        DroneInformation droneInformation = new DroneInformation(new GregorianCalendar(2020, 11, 27),dr);
+        entityManager.persist(droneInformation);
+        droneInformation = entityManager.merge(droneInformation);
+        entityManager.remove(droneInformation);
+
+        dr = entityManager.merge(dr);
+        assertNotNull(dr);
+
+        assertNull(entityManager.find(DroneInformation.class, droneInformation.getId()));
+
     }
 }
