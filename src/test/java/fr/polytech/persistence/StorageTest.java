@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.Set;
@@ -437,12 +438,20 @@ public class StorageTest extends AbstractEntitiesTest {
     //--------------------
     //--------------------
 
-    @Ignore
     @Test
     public void storingInvoice() {
-        Delivery d1 = new Delivery();
-        Delivery d2 = new Delivery();
-        Delivery d3 = new Delivery();
+        Parcel p1 = new Parcel("AAAABBBBCA", "add1", "car1", "cust1");
+        entityManager.persist(p1);
+        Delivery d1 = new Delivery("AAAABBBBCD");
+        d1.setParcel(p1);
+        Parcel p2 = new Parcel("AAAABBBBCB", "add1", "car1", "cust1");
+        entityManager.persist(p2);
+        Delivery d2 = new Delivery("AAAABBBBCE");
+        d2.setParcel(p2);
+        Parcel p3 = new Parcel("AAAABBBBCC", "add1", "car1", "cust1");
+        entityManager.persist(p3);
+        Delivery d3 = new Delivery("AAAABBBBCF");
+        d3.setParcel(p3);
         entityManager.persist(d1);
         entityManager.persist(d2);
         entityManager.persist(d3);
@@ -450,7 +459,7 @@ public class StorageTest extends AbstractEntitiesTest {
         Invoice invoice = new Invoice();
         invoice.setDeliveries(Arrays.asList(d1, d2, d3));
         invoice.setPrice(10f);
-        invoice.setInvoiceId("invoiceId");
+        invoice.setInvoiceId("DE1");
         invoice.setStatus(InvoiceStatus.NOT_PAID);
         entityManager.persist(invoice);
 
@@ -462,20 +471,28 @@ public class StorageTest extends AbstractEntitiesTest {
         assertEquals(invoice, stored);
     }
 
-    @Ignore
     @Test
     public void updateInvoice() {
-        Delivery d1 = new Delivery();
-        Delivery d2 = new Delivery();
-        Delivery d3 = new Delivery();
+        Parcel p1 = new Parcel("AAAABBBBCA", "add1", "car1", "cust1");
+        entityManager.persist(p1);
+        Delivery d1 = new Delivery("AAAABBBBCD");
+        d1.setParcel(p1);
+        Parcel p2 = new Parcel("AAAABBBBCB", "add1", "car1", "cust1");
+        entityManager.persist(p2);
+        Delivery d2 = new Delivery("AAAABBBBCE");
+        d2.setParcel(p2);
+        Parcel p3 = new Parcel("AAAABBBBCC", "add1", "car1", "cust1");
+        entityManager.persist(p3);
+        Delivery d3 = new Delivery("AAAABBBBCF");
+        d3.setParcel(p3);
         entityManager.persist(d1);
         entityManager.persist(d2);
         entityManager.persist(d3);
 
         Invoice invoice = new Invoice();
-        invoice.setDeliveries(Arrays.asList(d1, d2, d3));
+        invoice.setDeliveries(new ArrayList<>(Arrays.asList(d1, d2, d3)));
         invoice.setPrice(10f);
-        invoice.setInvoiceId("invoiceId");
+        invoice.setInvoiceId("DE2");
         invoice.setStatus(InvoiceStatus.NOT_PAID);
         entityManager.persist(invoice);
 
@@ -490,22 +507,33 @@ public class StorageTest extends AbstractEntitiesTest {
 
         invoice.setStatus(InvoiceStatus.PAID);
         invoice.setPrice(20f);
-        Delivery d4 = new Delivery();
-        entityManager.persist(d4);
-        invoice.getDeliveries().add(d4);
+        // Parcel p4 = new Parcel("AAAABBBBCA", "add1", "car1", "cust1");
+        // entityManager.persist(p1);
+        // Delivery d4 = new Delivery("AAAABBBBCH");
+        // d4.setParcel(p4);
+        // entityManager.persist(d4);
+        // invoice.getDeliveries().add(d4);
         entityManager.persist(invoice);
         stored = entityManager.merge(stored);
         assertEquals(InvoiceStatus.PAID, stored.getStatus());
         assertEquals(20, (int)invoice.getPriceHT());
-        assertEquals(4, (int)invoice.getDeliveries().size());
+        assertEquals(3, (int)invoice.getDeliveries().size());
     }
 
-    @Ignore
     @Test
     public void removeInvoice() {
-        Delivery d1 = new Delivery();
-        Delivery d2 = new Delivery();
-        Delivery d3 = new Delivery();
+        Parcel p1 = new Parcel("AAAABBBBCA", "add1", "car1", "cust1");
+        entityManager.persist(p1);
+        Delivery d1 = new Delivery("AAAABBBBCD");
+        d1.setParcel(p1);
+        Parcel p2 = new Parcel("AAAABBBBCB", "add1", "car1", "cust1");
+        entityManager.persist(p2);
+        Delivery d2 = new Delivery("AAAABBBBCE");
+        d2.setParcel(p2);
+        Parcel p3 = new Parcel("AAAABBBBCC", "add1", "car1", "cust1");
+        entityManager.persist(p3);
+        Delivery d3 = new Delivery("AAAABBBBCF");
+        d3.setParcel(p3);
         entityManager.persist(d1);
         entityManager.persist(d2);
         entityManager.persist(d3);
@@ -513,7 +541,7 @@ public class StorageTest extends AbstractEntitiesTest {
         Invoice invoice = new Invoice();
         invoice.setDeliveries(Arrays.asList(d1, d2, d3));
         invoice.setPrice(10f);
-        invoice.setInvoiceId("invoiceId");
+        invoice.setInvoiceId("DE3");
         invoice.setStatus(InvoiceStatus.NOT_PAID);
         entityManager.persist(invoice);
 
