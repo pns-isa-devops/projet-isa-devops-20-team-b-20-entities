@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.Set;
 
@@ -422,6 +423,110 @@ public class StorageTest extends AbstractEntitiesTest {
         assertNotNull(dr);
 
         assertNull(entityManager.find(DroneInformation.class, droneInformation.getId()));
+
+    }
+
+    //--------------------
+    //--------------------
+    //--------------------
+    //--------------------
+    //--------------------
+    //--------------------
+    //--------------------
+    //--------------------
+    //--------------------
+    //--------------------
+
+    @Ignore
+    @Test
+    public void storingInvoice() {
+        Delivery d1 = new Delivery();
+        Delivery d2 = new Delivery();
+        Delivery d3 = new Delivery();
+        entityManager.persist(d1);
+        entityManager.persist(d2);
+        entityManager.persist(d3);
+
+        Invoice invoice = new Invoice();
+        invoice.setDeliveries(Arrays.asList(d1, d2, d3));
+        invoice.setPrice(10f);
+        invoice.setInvoiceId("invoiceId");
+        invoice.setStatus(InvoiceStatus.NOT_PAID);
+        entityManager.persist(invoice);
+
+        assertNotNull(entityManager.find(Invoice.class, invoice.getId()));
+
+        int id = (int) invoice.getId();
+
+        Invoice stored = (Invoice) entityManager.find(Invoice.class, id);
+        assertEquals(invoice, stored);
+    }
+
+    @Ignore
+    @Test
+    public void updateInvoice() {
+        Delivery d1 = new Delivery();
+        Delivery d2 = new Delivery();
+        Delivery d3 = new Delivery();
+        entityManager.persist(d1);
+        entityManager.persist(d2);
+        entityManager.persist(d3);
+
+        Invoice invoice = new Invoice();
+        invoice.setDeliveries(Arrays.asList(d1, d2, d3));
+        invoice.setPrice(10f);
+        invoice.setInvoiceId("invoiceId");
+        invoice.setStatus(InvoiceStatus.NOT_PAID);
+        entityManager.persist(invoice);
+
+        assertNotNull(entityManager.find(Invoice.class, invoice.getId()));
+
+        int id = (int) invoice.getId();
+
+        Invoice stored = (Invoice) entityManager.find(Invoice.class, id);
+        assertEquals(InvoiceStatus.NOT_PAID, invoice.getStatus());
+        assertEquals(10, (int)invoice.getPriceHT());
+        assertEquals(3, (int)invoice.getDeliveries().size());
+
+        invoice.setStatus(InvoiceStatus.PAID);
+        invoice.setPrice(20f);
+        Delivery d4 = new Delivery();
+        entityManager.persist(d4);
+        invoice.getDeliveries().add(d4);
+        entityManager.persist(invoice);
+        stored = entityManager.merge(stored);
+        assertEquals(InvoiceStatus.PAID, stored.getStatus());
+        assertEquals(20, (int)invoice.getPriceHT());
+        assertEquals(4, (int)invoice.getDeliveries().size());
+    }
+
+    @Ignore
+    @Test
+    public void removeInvoice() {
+        Delivery d1 = new Delivery();
+        Delivery d2 = new Delivery();
+        Delivery d3 = new Delivery();
+        entityManager.persist(d1);
+        entityManager.persist(d2);
+        entityManager.persist(d3);
+
+        Invoice invoice = new Invoice();
+        invoice.setDeliveries(Arrays.asList(d1, d2, d3));
+        invoice.setPrice(10f);
+        invoice.setInvoiceId("invoiceId");
+        invoice.setStatus(InvoiceStatus.NOT_PAID);
+        entityManager.persist(invoice);
+
+        assertNotNull(entityManager.find(Invoice.class, invoice.getId()));
+
+
+        invoice = entityManager.merge(invoice);
+        entityManager.remove(invoice);
+
+        d1 = entityManager.merge(d1);
+        assertNotNull(d1);
+
+        assertNull(entityManager.find(DroneInformation.class, invoice.getId()));
 
     }
 }
