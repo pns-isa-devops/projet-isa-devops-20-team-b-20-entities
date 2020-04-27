@@ -507,17 +507,17 @@ public class StorageTest extends AbstractEntitiesTest {
 
         invoice.setStatus(InvoiceStatus.PAID);
         invoice.setPrice(20f);
-        // Parcel p4 = new Parcel("AAAABBBBCA", "add1", "car1", "cust1");
-        // entityManager.persist(p1);
-        // Delivery d4 = new Delivery("AAAABBBBCH");
-        // d4.setParcel(p4);
-        // entityManager.persist(d4);
-        // invoice.getDeliveries().add(d4);
+        Parcel p4 = new Parcel("AAAABBBBCA", "add1", "car1", "cust1");
+        entityManager.persist(p4);
+        Delivery d4 = new Delivery("AAAABBBBCH");
+        d4.setParcel(p4);
+        entityManager.persist(d4);
+        invoice.getDeliveries().add(d4);
         entityManager.persist(invoice);
         stored = entityManager.merge(stored);
         assertEquals(InvoiceStatus.PAID, stored.getStatus());
         assertEquals(20, (int)invoice.getPriceHT());
-        assertEquals(3, (int)invoice.getDeliveries().size());
+        assertEquals(4, (int)invoice.getDeliveries().size());
     }
 
     @Test
