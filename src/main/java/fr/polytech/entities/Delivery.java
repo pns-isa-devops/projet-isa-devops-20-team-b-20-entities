@@ -129,4 +129,12 @@ public class Delivery implements Serializable {
             result += ", status: " + status;
         return result;
     }
+
+	public Invoice getInvoice() {
+        return this.invoice;
+    }
+
+    public void setInvoice(Invoice invoice) {
+        this.invoice = invoice;
+    }
 }

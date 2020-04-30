@@ -502,7 +502,7 @@ public class StorageTest extends AbstractEntitiesTest {
 
         Invoice stored = (Invoice) entityManager.find(Invoice.class, id);
         assertEquals(InvoiceStatus.NOT_PAID, invoice.getStatus());
-        assertEquals(10, (int)invoice.getPriceHT());
+        assertEquals(10, (int)invoice.getPrice());
         assertEquals(3, (int)invoice.getDeliveries().size());
 
         invoice.setStatus(InvoiceStatus.PAID);
@@ -516,7 +516,7 @@ public class StorageTest extends AbstractEntitiesTest {
         entityManager.persist(invoice);
         stored = entityManager.merge(stored);
         assertEquals(InvoiceStatus.PAID, stored.getStatus());
-        assertEquals(20, (int)invoice.getPriceHT());
+        assertEquals(20, (int)invoice.getPrice());
         assertEquals(4, (int)invoice.getDeliveries().size());
     }
 

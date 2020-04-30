@@ -63,7 +63,7 @@ public class Invoice implements Serializable {
         this.deliveries = deliveries;
     }
 
-    public float getPriceHT() {
+    public float getPrice() {
         return this.price;
     }
 
@@ -96,7 +96,7 @@ public class Invoice implements Serializable {
 
         msg.append("List of deliveries : \n");
 
-        for(Delivery delivery : deliveries)
+        for(Delivery delivery : this.getDeliveries())
         {
             msg.append(delivery.toString());
             msg.append("\n");
