@@ -31,7 +31,7 @@ public class Invoice implements Serializable {
     @Pattern(regexp = "([A-Z 0-9]){3}+", message = "Invalid invoice id")
     private String invoiceId;
 
-    @OneToMany(cascade = { CascadeType.PERSIST }, mappedBy = "invoice")
+    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<Delivery> deliveries;
 
     @NotNull
@@ -88,16 +88,13 @@ public class Invoice implements Serializable {
     }
 
     @Override
-    public String toString() 
-    {
-        StringBuilder msg = new StringBuilder(String.format("[ Invoice N°%d\n"
-        + "Price HT : %f\n"
-        + "Price TTC : %f\n", id, price, getPriceTTC()));
+    public String toString() {
+        StringBuilder msg = new StringBuilder(
+                String.format("[ Invoice N°%d\n" + "Price HT : %f\n" + "Price TTC : %f\n", id, price, getPriceTTC()));
 
         msg.append("List of deliveries : \n");
 
-        for(Delivery delivery : this.getDeliveries())
-        {
+        for (Delivery delivery : this.getDeliveries()) {
             msg.append(delivery.toString());
             msg.append("\n");
         }
@@ -106,28 +103,29 @@ public class Invoice implements Serializable {
     }
 
     @Override
-    public boolean equals(Object other)
-    {
-        if(!(other instanceof Invoice)) return false;
-        if(this == other) return true;
+    public boolean equals(Object other) {
+        if (!(other instanceof Invoice))
+            return false;
+        if (this == other)
+            return true;
 
-        Invoice otherInvoice = (Invoice)other;
+        Invoice otherInvoice = (Invoice) other;
 
-        if (getInvoiceId() != null ? !getInvoiceId().equals(otherInvoice.getInvoiceId()) : otherInvoice.getInvoiceId() != null) {
+        if (getInvoiceId() != null ? !getInvoiceId().equals(otherInvoice.getInvoiceId())
+                : otherInvoice.getInvoiceId() != null) {
             return false;
         }
 
-        if (getDeliveries() != null ? !getDeliveries().equals(otherInvoice.getDeliveries()) : otherInvoice.getDeliveries() != null) {
+        if (getDeliveries() != null ? !getDeliveries().equals(otherInvoice.getDeliveries())
+                : otherInvoice.getDeliveries() != null) {
             return false;
         }
 
-        return this.price == otherInvoice.price
-        && this.status == otherInvoice.status;
+        return this.price == otherInvoice.price && this.status == otherInvoice.status;
     }
 
     @Override
-    public int hashCode() 
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + (getInvoiceId() != null ? getInvoiceId().hashCode() : 0);
