@@ -37,6 +37,9 @@ public class Delivery implements Serializable {
     @Enumerated(EnumType.STRING)
     private DeliveryStatus status = DeliveryStatus.NOT_DELIVERED;
 
+    @ManyToOne
+    private Invoice invoice;
+
     public Delivery() {
         // Necessary for JPA instantiation process
     }
@@ -125,5 +128,13 @@ public class Delivery implements Serializable {
         if (status != null)
             result += ", status: " + status;
         return result;
+    }
+
+	public Invoice getInvoice() {
+        return this.invoice;
+    }
+
+    public void setInvoice(Invoice invoice) {
+        this.invoice = invoice;
     }
 }

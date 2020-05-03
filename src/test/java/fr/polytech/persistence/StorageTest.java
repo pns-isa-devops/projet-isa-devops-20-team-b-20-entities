@@ -7,6 +7,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.Set;
 
@@ -422,6 +424,137 @@ public class StorageTest extends AbstractEntitiesTest {
         assertNotNull(dr);
 
         assertNull(entityManager.find(DroneInformation.class, droneInformation.getId()));
+
+    }
+
+    //--------------------
+    //--------------------
+    //--------------------
+    //--------------------
+    //--------------------
+    //--------------------
+    //--------------------
+    //--------------------
+    //--------------------
+    //--------------------
+
+    @Test
+    public void storingInvoice() {
+        Parcel p1 = new Parcel("AAAABBBBCA", "add1", "car1", "cust1");
+        entityManager.persist(p1);
+        Delivery d1 = new Delivery("AAAABBBBCD");
+        d1.setParcel(p1);
+        Parcel p2 = new Parcel("AAAABBBBCB", "add1", "car1", "cust1");
+        entityManager.persist(p2);
+        Delivery d2 = new Delivery("AAAABBBBCE");
+        d2.setParcel(p2);
+        Parcel p3 = new Parcel("AAAABBBBCC", "add1", "car1", "cust1");
+        entityManager.persist(p3);
+        Delivery d3 = new Delivery("AAAABBBBCF");
+        d3.setParcel(p3);
+        entityManager.persist(d1);
+        entityManager.persist(d2);
+        entityManager.persist(d3);
+
+        Invoice invoice = new Invoice();
+        invoice.setDeliveries(Arrays.asList(d1, d2, d3));
+        invoice.setPrice(10f);
+        invoice.setInvoiceId("DE1");
+        invoice.setStatus(InvoiceStatus.NOT_PAID);
+        entityManager.persist(invoice);
+
+        assertNotNull(entityManager.find(Invoice.class, invoice.getId()));
+
+        int id = (int) invoice.getId();
+
+        Invoice stored = (Invoice) entityManager.find(Invoice.class, id);
+        assertEquals(invoice, stored);
+    }
+
+    @Test
+    public void updateInvoice() {
+        Parcel p1 = new Parcel("AAAABBBBCA", "add1", "car1", "cust1");
+        entityManager.persist(p1);
+        Delivery d1 = new Delivery("AAAABBBBCD");
+        d1.setParcel(p1);
+        Parcel p2 = new Parcel("AAAABBBBCB", "add1", "car1", "cust1");
+        entityManager.persist(p2);
+        Delivery d2 = new Delivery("AAAABBBBCE");
+        d2.setParcel(p2);
+        Parcel p3 = new Parcel("AAAABBBBCC", "add1", "car1", "cust1");
+        entityManager.persist(p3);
+        Delivery d3 = new Delivery("AAAABBBBCF");
+        d3.setParcel(p3);
+        entityManager.persist(d1);
+        entityManager.persist(d2);
+        entityManager.persist(d3);
+
+        Invoice invoice = new Invoice();
+        invoice.setDeliveries(new ArrayList<>(Arrays.asList(d1, d2, d3)));
+        invoice.setPrice(10f);
+        invoice.setInvoiceId("DE2");
+        invoice.setStatus(InvoiceStatus.NOT_PAID);
+        entityManager.persist(invoice);
+
+        assertNotNull(entityManager.find(Invoice.class, invoice.getId()));
+
+        int id = (int) invoice.getId();
+
+        Invoice stored = (Invoice) entityManager.find(Invoice.class, id);
+        assertEquals(InvoiceStatus.NOT_PAID, invoice.getStatus());
+        assertEquals(10, (int)invoice.getPrice());
+        assertEquals(3, (int)invoice.getDeliveries().size());
+
+        invoice.setStatus(InvoiceStatus.PAID);
+        invoice.setPrice(20f);
+        Parcel p4 = new Parcel("AAAABBBBCA", "add1", "car1", "cust1");
+        entityManager.persist(p4);
+        Delivery d4 = new Delivery("AAAABBBBCH");
+        d4.setParcel(p4);
+        entityManager.persist(d4);
+        invoice.getDeliveries().add(d4);
+        entityManager.persist(invoice);
+        stored = entityManager.merge(stored);
+        assertEquals(InvoiceStatus.PAID, stored.getStatus());
+        assertEquals(20, (int)invoice.getPrice());
+        assertEquals(4, (int)invoice.getDeliveries().size());
+    }
+
+    @Test
+    public void removeInvoice() {
+        Parcel p1 = new Parcel("AAAABBBBCA", "add1", "car1", "cust1");
+        entityManager.persist(p1);
+        Delivery d1 = new Delivery("AAAABBBBCD");
+        d1.setParcel(p1);
+        Parcel p2 = new Parcel("AAAABBBBCB", "add1", "car1", "cust1");
+        entityManager.persist(p2);
+        Delivery d2 = new Delivery("AAAABBBBCE");
+        d2.setParcel(p2);
+        Parcel p3 = new Parcel("AAAABBBBCC", "add1", "car1", "cust1");
+        entityManager.persist(p3);
+        Delivery d3 = new Delivery("AAAABBBBCF");
+        d3.setParcel(p3);
+        entityManager.persist(d1);
+        entityManager.persist(d2);
+        entityManager.persist(d3);
+
+        Invoice invoice = new Invoice();
+        invoice.setDeliveries(Arrays.asList(d1, d2, d3));
+        invoice.setPrice(10f);
+        invoice.setInvoiceId("DE3");
+        invoice.setStatus(InvoiceStatus.NOT_PAID);
+        entityManager.persist(invoice);
+
+        assertNotNull(entityManager.find(Invoice.class, invoice.getId()));
+
+
+        invoice = entityManager.merge(invoice);
+        entityManager.remove(invoice);
+
+        d1 = entityManager.merge(d1);
+        assertNotNull(d1);
+
+        assertNull(entityManager.find(DroneInformation.class, invoice.getId()));
 
     }
 }

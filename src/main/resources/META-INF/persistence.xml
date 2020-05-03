@@ -10,6 +10,7 @@
         <class>fr.polytech.entities.Parcel</class>
         <class>fr.polytech.entities.TimeSlot</class>
         <class>fr.polytech.entities.DroneInformation</class>
+        <class>fr.polytech.entities.Invoice</class>
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 

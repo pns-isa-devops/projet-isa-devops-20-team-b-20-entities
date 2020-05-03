@@ -97,7 +97,7 @@ public class Parcel implements Serializable {
         if (getCarrier() != null ? !getCarrier().equals(other.getCarrier()) : other.getCarrier() != null) {
             return false;
         }
-        return getCustomerName() != null ? !getCustomerName().equals(other.getCustomerName())
+        return getCustomerName() != null ? getCustomerName().equals(other.getCustomerName())
                 : other.getCustomerName() == null;
     }
 
