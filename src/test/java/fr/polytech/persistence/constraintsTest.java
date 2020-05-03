@@ -22,6 +22,7 @@ public class constraintsTest extends AbstractEntitiesTest {
 
     @PersistenceContext
     private EntityManager entityManager;
+
     @Resource
     private UserTransaction manual;
 

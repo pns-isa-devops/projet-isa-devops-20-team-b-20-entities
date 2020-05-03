@@ -1,12 +1,11 @@
 package fr.polytech.persistence;
 
-
 import java.util.GregorianCalendar;
 
-
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
+import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -24,48 +23,85 @@ import fr.polytech.entities.TimeSlot;
 import fr.polytech.entities.TimeState;
 
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * StorageTest
  */
 @RunWith(Arquillian.class)
-@Transactional(TransactionMode.COMMIT)
 public class DeliveryRelationshipsTest extends AbstractEntitiesTest {
 
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Resource
+    private UserTransaction manual;
+
     private Delivery delivery;
-    private Parcel p ;
+    private Parcel p;
 
     @Before
-    public void SetUp(){
+    public void SetUp() throws Exception {
+        manual.begin();
         p = new Parcel("AAAABBBBCC", "add1", "car1", "cust1");
         entityManager.persist(p);
 
         delivery = new Delivery("DEL1234567");
         delivery.setParcel(p);
         entityManager.persist(delivery);
+        manual.commit();
     }
 
     @Test
-    public void OneToOneDrone(){
+    public void OneToOneDrone() throws Exception {
+        manual.begin();
         Drone drone = new Drone("345");
         entityManager.persist(drone);
 
+        delivery = entityManager.merge(delivery);
         delivery.setDrone(drone);
-
-        entityManager.persist(delivery);
 
         Delivery storedDelivery = entityManager.merge(delivery);
 
-        assertEquals(drone,storedDelivery.getDrone());
-
+        assertEquals(drone, storedDelivery.getDrone());
+        manual.commit();
     }
 
     @Test
-    public void OneToOneParcel(){
+    public void OneToOneParcel() throws Exception {
+        manual.begin();
         Delivery storedDelivery = entityManager.merge(delivery);
-        assertEquals(p,storedDelivery.getParcel());
+        assertEquals(p, storedDelivery.getParcel());
+        manual.commit();
+    }
+
+    @Test
+    public void OneToOneDroneToManyTimeslot() throws Exception {
+        manual.begin();
+        delivery = entityManager.find(Delivery.class, delivery.getId());
+        Drone drone = new Drone("123");
+        entityManager.merge(drone);
+        delivery.setDrone(drone);
+        manual.commit();
+
+        manual.begin();
+        delivery = entityManager.find(Delivery.class, delivery.getId());
+        assertTrue(drone.getTimeSlots().isEmpty());
+        assertNotNull(delivery.getDrone());
+        manual.commit();
+
+        manual.begin();
+        TimeSlot ts1 = new TimeSlot(new GregorianCalendar(), TimeState.DELIVERY);
+        delivery = entityManager.find(Delivery.class, delivery.getId());
+        ts1.setDrone(delivery.getDrone());
+        entityManager.persist(ts1);
+        delivery.getDrone().add(ts1);
+        manual.commit();
+
+        manual.begin();
+        delivery = entityManager.find(Delivery.class, delivery.getId());
+        drone = delivery.getDrone();
+        assertFalse(drone.getTimeSlots().isEmpty());
+        manual.commit();
     }
 }

@@ -32,7 +32,6 @@ public class Drone implements Serializable {
 
     private int flightTime;
 
-
     public int getFlightTime() {
         return flightTime;
     }
@@ -40,7 +39,6 @@ public class Drone implements Serializable {
     public void setFlightTime(int flightTime) {
         this.flightTime = flightTime;
     }
-
 
     /**
      * Creates a drone of ID 000.
@@ -51,6 +49,7 @@ public class Drone implements Serializable {
 
     /**
      * Creates a drone with the specified ID.
+     * 
      * @param id
      */
     public Drone(String id) {
@@ -79,7 +78,6 @@ public class Drone implements Serializable {
     public void setCurrentDelivery(Delivery currentDelivery) {
         this.currentDelivery = currentDelivery;
     }
-
 
     public int getId() {
         return id;
