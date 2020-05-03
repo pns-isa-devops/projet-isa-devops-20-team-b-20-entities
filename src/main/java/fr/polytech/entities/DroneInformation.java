@@ -21,7 +21,7 @@ public class DroneInformation implements Serializable {
     private double occupationRate;
 
     @NotNull
-    @OneToOne
+    @ManyToOne
     private Drone drone;
 
     public DroneInformation(){
