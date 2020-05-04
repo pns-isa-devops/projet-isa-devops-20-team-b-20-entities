@@ -1,6 +1,8 @@
 package fr.polytech.entities;
 
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,11 +26,15 @@ public class Drone implements Serializable {
     @OneToOne(cascade = CascadeType.MERGE)
     private Delivery currentDelivery;
 
+    @OneToMany(cascade = { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "drone")
+    private Set<TimeSlot> timeSlots;
+
     @Enumerated(EnumType.STRING)
     private DroneStatus droneStatus;
 
-    @OneToMany(cascade = { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "drone")
-    private Set<TimeSlot> timeSlots;
+    @OneToMany(cascade = { CascadeType.REMOVE, CascadeType.MERGE, CascadeType.PERSIST }, mappedBy = "drone")
+    private Set<DroneInformation> droneInformation;
+
 
     private int flightTime;
 
@@ -56,6 +62,7 @@ public class Drone implements Serializable {
         this.droneId = id;
         this.droneStatus = DroneStatus.AVAILABLE;
         timeSlots = new HashSet<>();
+        droneInformation = new HashSet<>();
         this.flightTime = 0;
     }
 
@@ -89,6 +96,28 @@ public class Drone implements Serializable {
 
     public void setDroneStatus(DroneStatus droneStatus) {
         this.droneStatus = droneStatus;
+    }
+
+    public Set<DroneInformation> getDroneInformation() {
+        return droneInformation;
+    }
+
+    public DroneInformation getDroneInformationAtDate(GregorianCalendar gregorianCalendar) {
+
+        for (DroneInformation droneInformation : this.droneInformation){
+            if(droneInformation.getDate().get(Calendar.YEAR) == gregorianCalendar.get(Calendar.YEAR)
+                    && droneInformation.getDate().get(Calendar.MONTH) == gregorianCalendar.get(Calendar.MONTH)
+                    && droneInformation.getDate().get(Calendar.DAY_OF_MONTH) == gregorianCalendar.get(Calendar.DAY_OF_MONTH)
+            ){
+                return droneInformation;
+            }
+        }
+        return null;
+
+    }
+
+    public void setDroneInformation(Set<DroneInformation> droneInformation) {
+        this.droneInformation = droneInformation;
     }
 
     public Set<TimeSlot> getTimeSlots() {
@@ -145,6 +174,10 @@ public class Drone implements Serializable {
             result += ", status: " + droneStatus;
         if (timeSlots != null)
             result += ", timeslots: " + timeSlots;
+        if (droneInformation != null)
+            result += ", droneInformation : " + droneInformation;
+
+            result += ", flight time: " + flightTime;
         return result;
     }
 }
