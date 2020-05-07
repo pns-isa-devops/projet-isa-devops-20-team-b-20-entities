@@ -35,7 +35,6 @@ public class Drone implements Serializable {
     @OneToMany(cascade = { CascadeType.REMOVE, CascadeType.MERGE, CascadeType.PERSIST }, mappedBy = "drone")
     private Set<DroneInformation> droneInformation;
 
-
     private int flightTime;
 
     public int getFlightTime() {
@@ -55,7 +54,7 @@ public class Drone implements Serializable {
 
     /**
      * Creates a drone with the specified ID.
-     * 
+     *
      * @param id
      */
     public Drone(String id) {
@@ -104,11 +103,11 @@ public class Drone implements Serializable {
 
     public DroneInformation getDroneInformationAtDate(GregorianCalendar gregorianCalendar) {
 
-        for (DroneInformation droneInformation : this.droneInformation){
-            if(droneInformation.getDate().get(Calendar.YEAR) == gregorianCalendar.get(Calendar.YEAR)
+        for (DroneInformation droneInformation : this.droneInformation) {
+            if (droneInformation.getDate().get(Calendar.YEAR) == gregorianCalendar.get(Calendar.YEAR)
                     && droneInformation.getDate().get(Calendar.MONTH) == gregorianCalendar.get(Calendar.MONTH)
-                    && droneInformation.getDate().get(Calendar.DAY_OF_MONTH) == gregorianCalendar.get(Calendar.DAY_OF_MONTH)
-            ){
+                    && droneInformation.getDate().get(Calendar.DAY_OF_MONTH) == gregorianCalendar
+                            .get(Calendar.DAY_OF_MONTH)) {
                 return droneInformation;
             }
         }
@@ -130,8 +129,10 @@ public class Drone implements Serializable {
 
     public TimeSlot getTimeSlot(Delivery delivery) {
         for (TimeSlot timeSlot : this.timeSlots) {
-            if (timeSlot.getDelivery().equals(delivery)) {
-                return timeSlot;
+            if (timeSlot.getDelivery() != null) {
+                if (timeSlot.getDelivery().equals(delivery)) {
+                    return timeSlot;
+                }
             }
         }
         return null;
@@ -177,7 +178,7 @@ public class Drone implements Serializable {
         if (droneInformation != null)
             result += ", droneInformation : " + droneInformation;
 
-            result += ", flight time: " + flightTime;
+        result += ", flight time: " + flightTime;
         return result;
     }
 }
