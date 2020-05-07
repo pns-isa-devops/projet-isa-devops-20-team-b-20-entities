@@ -459,7 +459,7 @@ public class StorageTest extends AbstractEntitiesTest {
         Invoice invoice = new Invoice();
         invoice.setDeliveries(Arrays.asList(d1, d2, d3));
         invoice.setPrice(10f);
-        invoice.setInvoiceId("DE1");
+        invoice.setInvoiceId("0123456789ABDE1");
         invoice.setStatus(InvoiceStatus.NOT_PAID);
         entityManager.persist(invoice);
 
@@ -492,7 +492,7 @@ public class StorageTest extends AbstractEntitiesTest {
         Invoice invoice = new Invoice();
         invoice.setDeliveries(new ArrayList<>(Arrays.asList(d1, d2, d3)));
         invoice.setPrice(10f);
-        invoice.setInvoiceId("DE2");
+        invoice.setInvoiceId("0123456789ABDE2");
         invoice.setStatus(InvoiceStatus.NOT_PAID);
         entityManager.persist(invoice);
 
@@ -541,7 +541,7 @@ public class StorageTest extends AbstractEntitiesTest {
         Invoice invoice = new Invoice();
         invoice.setDeliveries(Arrays.asList(d1, d2, d3));
         invoice.setPrice(10f);
-        invoice.setInvoiceId("DE3");
+        invoice.setInvoiceId("0123456789ABDE3");
         invoice.setStatus(InvoiceStatus.NOT_PAID);
         entityManager.persist(invoice);
 
