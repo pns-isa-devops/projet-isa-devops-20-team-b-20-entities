@@ -8,6 +8,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,7 +32,7 @@ public class Invoice implements Serializable {
     @Pattern(regexp = "([A-Z 0-9]){15}+", message = "Invalid invoice id")
     private String invoiceId;
 
-    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @OneToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
     private List<Delivery> deliveries;
 
     @NotNull
