@@ -32,7 +32,7 @@ public class Invoice implements Serializable {
     @Pattern(regexp = "([A-Z 0-9]){15}+", message = "Invalid invoice id")
     private String invoiceId;
 
-    @OneToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
+    @OneToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.LAZY)
     private List<Delivery> deliveries;
 
     @NotNull
