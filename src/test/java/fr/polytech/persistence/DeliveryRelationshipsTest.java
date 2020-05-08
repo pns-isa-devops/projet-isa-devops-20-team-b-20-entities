@@ -1,5 +1,10 @@
 package fr.polytech.persistence;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.GregorianCalendar;
 
 import javax.annotation.Resource;
@@ -8,8 +13,6 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
-import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,13 +20,9 @@ import org.junit.runner.RunWith;
 import arquillian.AbstractEntitiesTest;
 import fr.polytech.entities.Delivery;
 import fr.polytech.entities.Drone;
-
 import fr.polytech.entities.Parcel;
 import fr.polytech.entities.TimeSlot;
 import fr.polytech.entities.TimeState;
-
-import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * StorageTest

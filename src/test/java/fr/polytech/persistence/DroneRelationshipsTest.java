@@ -1,11 +1,8 @@
 package fr.polytech.persistence;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 
 import java.util.GregorianCalendar;
-
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -20,7 +17,6 @@ import org.junit.runner.RunWith;
 import arquillian.AbstractEntitiesTest;
 import fr.polytech.entities.Delivery;
 import fr.polytech.entities.Drone;
-
 import fr.polytech.entities.Parcel;
 import fr.polytech.entities.TimeSlot;
 import fr.polytech.entities.TimeState;
@@ -38,13 +34,13 @@ public class DroneRelationshipsTest extends AbstractEntitiesTest {
     private Drone drone;
 
     @Before
-    public void SetUp(){
+    public void SetUp() {
         drone = new Drone("123");
         entityManager.persist(drone);
     }
 
     @Test
-    public void OneToManyTimeSlots(){
+    public void OneToManyTimeSlots() {
 
         // Empty timeslots created
         assertEquals(0, drone.getTimeSlots().size());
@@ -59,21 +55,21 @@ public class DroneRelationshipsTest extends AbstractEntitiesTest {
         int idDrone = drone.getId();
         Drone storedDrone = (Drone) entityManager.find(Drone.class, idDrone);
 
-        assertEquals(1,storedDrone.getTimeSlots().size());
+        assertEquals(1, storedDrone.getTimeSlots().size());
 
         // Add a second timeslot
-        TimeSlot t2= new TimeSlot(new GregorianCalendar(2020, 11, 12), TimeState.DELIVERY);
+        TimeSlot t2 = new TimeSlot(new GregorianCalendar(2020, 11, 12), TimeState.DELIVERY);
         entityManager.persist(t2);
         TimeSlot stored2 = (TimeSlot) entityManager.find(TimeSlot.class, t2.getId());
         drone.getTimeSlots().add(stored2);
         entityManager.persist(drone);
         storedDrone = (Drone) entityManager.find(Drone.class, idDrone);
-        assertEquals(2,storedDrone.getTimeSlots().size());
+        assertEquals(2, storedDrone.getTimeSlots().size());
 
     }
 
     @Test
-    public void OneToOneDelivery(){
+    public void OneToOneDelivery() {
 
         // Create a delivery
         Parcel p = new Parcel("AAAABBBBCC", "add1", "car1", "cust1");
@@ -89,10 +85,9 @@ public class DroneRelationshipsTest extends AbstractEntitiesTest {
 
         Delivery storedDe = entityManager.find(Delivery.class, de.getId());
 
-
         int idDrone = drone.getId();
         Drone storedDrone = entityManager.find(Drone.class, idDrone);
-        assertEquals(storedDe,storedDrone.getCurrentDelivery());
+        assertEquals(storedDe, storedDrone.getCurrentDelivery());
 
     }
 }

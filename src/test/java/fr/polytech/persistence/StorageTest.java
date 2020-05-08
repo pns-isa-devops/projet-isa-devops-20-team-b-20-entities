@@ -19,15 +19,22 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import fr.polytech.entities.*;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import arquillian.AbstractEntitiesTest;
+import fr.polytech.entities.Delivery;
+import fr.polytech.entities.Drone;
+import fr.polytech.entities.DroneInformation;
+import fr.polytech.entities.DroneStatus;
+import fr.polytech.entities.Invoice;
+import fr.polytech.entities.InvoiceStatus;
+import fr.polytech.entities.Parcel;
+import fr.polytech.entities.TimeSlot;
+import fr.polytech.entities.TimeState;
 
 /**
  * StorageTest
@@ -335,28 +342,28 @@ public class StorageTest extends AbstractEntitiesTest {
         assertNotNull(entityManager.find(Delivery.class, de.getId()));
     }
 
-    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // - - -  - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     @Test
     public void storingDroneInformation() {
         Drone dr = new Drone("123");
         entityManager.persist(dr);
         dr = entityManager.merge(dr);
 
-        DroneInformation droneInformation = new DroneInformation(new GregorianCalendar(2020, 11, 27),dr);
+        DroneInformation droneInformation = new DroneInformation(new GregorianCalendar(2020, 11, 27), dr);
         assertEquals(0, droneInformation.getId());
         entityManager.persist(droneInformation);
         int id = droneInformation.getId();
@@ -369,7 +376,7 @@ public class StorageTest extends AbstractEntitiesTest {
         entityManager.persist(stored);
 
         DroneInformation stored2 = entityManager.merge(stored);
-        assertEquals(10.0,stored2.getOccupationRate(),0.001);
+        assertEquals(10.0, stored2.getOccupationRate(), 0.001);
     }
 
     @Test
@@ -378,7 +385,7 @@ public class StorageTest extends AbstractEntitiesTest {
         entityManager.persist(dr);
         dr = entityManager.merge(dr);
 
-        DroneInformation droneInformation = new DroneInformation(new GregorianCalendar(2020, 11, 27),dr);
+        DroneInformation droneInformation = new DroneInformation(new GregorianCalendar(2020, 11, 27), dr);
         entityManager.persist(droneInformation);
 
         // Occupation rate
@@ -386,14 +393,14 @@ public class StorageTest extends AbstractEntitiesTest {
         entityManager.persist(droneInformation);
 
         DroneInformation stored2 = entityManager.merge(droneInformation);
-        assertEquals(10.0,stored2.getOccupationRate(),0.001);
+        assertEquals(10.0, stored2.getOccupationRate(), 0.001);
 
         // Date
         stored2.setDate(new GregorianCalendar(2020, 11, 28));
         entityManager.persist(stored2);
 
         DroneInformation stored3 = entityManager.merge(droneInformation);
-        assertEquals(new GregorianCalendar(2020, 11, 28),stored3.getDate());
+        assertEquals(new GregorianCalendar(2020, 11, 28), stored3.getDate());
 
         // Drone
         Drone dr2 = new Drone("234");
@@ -405,7 +412,7 @@ public class StorageTest extends AbstractEntitiesTest {
         entityManager.persist(stored3);
         DroneInformation stored4 = entityManager.merge(stored3);
 
-        assertEquals(dr2,stored4.getDrone());
+        assertEquals(dr2, stored4.getDrone());
 
     }
 
@@ -415,7 +422,7 @@ public class StorageTest extends AbstractEntitiesTest {
         entityManager.persist(dr);
         dr = entityManager.merge(dr);
 
-        DroneInformation droneInformation = new DroneInformation(new GregorianCalendar(2020, 11, 27),dr);
+        DroneInformation droneInformation = new DroneInformation(new GregorianCalendar(2020, 11, 27), dr);
         entityManager.persist(droneInformation);
         droneInformation = entityManager.merge(droneInformation);
         entityManager.remove(droneInformation);
@@ -427,16 +434,16 @@ public class StorageTest extends AbstractEntitiesTest {
 
     }
 
-    //--------------------
-    //--------------------
-    //--------------------
-    //--------------------
-    //--------------------
-    //--------------------
-    //--------------------
-    //--------------------
-    //--------------------
-    //--------------------
+    // --------------------
+    // --------------------
+    // --------------------
+    // --------------------
+    // --------------------
+    // --------------------
+    // --------------------
+    // --------------------
+    // --------------------
+    // --------------------
 
     @Test
     public void storingInvoice() {
@@ -502,8 +509,8 @@ public class StorageTest extends AbstractEntitiesTest {
 
         Invoice stored = (Invoice) entityManager.find(Invoice.class, id);
         assertEquals(InvoiceStatus.NOT_PAID, invoice.getStatus());
-        assertEquals(10, (int)invoice.getPrice());
-        assertEquals(3, (int)invoice.getDeliveries().size());
+        assertEquals(10, (int) invoice.getPrice());
+        assertEquals(3, (int) invoice.getDeliveries().size());
 
         invoice.setStatus(InvoiceStatus.PAID);
         invoice.setPrice(20f);
@@ -516,8 +523,8 @@ public class StorageTest extends AbstractEntitiesTest {
         entityManager.persist(invoice);
         stored = entityManager.merge(stored);
         assertEquals(InvoiceStatus.PAID, stored.getStatus());
-        assertEquals(20, (int)invoice.getPrice());
-        assertEquals(4, (int)invoice.getDeliveries().size());
+        assertEquals(20, (int) invoice.getPrice());
+        assertEquals(4, (int) invoice.getDeliveries().size());
     }
 
     @Test
@@ -546,7 +553,6 @@ public class StorageTest extends AbstractEntitiesTest {
         entityManager.persist(invoice);
 
         assertNotNull(entityManager.find(Invoice.class, invoice.getId()));
-
 
         invoice = entityManager.merge(invoice);
         entityManager.remove(invoice);
