@@ -113,7 +113,7 @@ pipeline{
                     }
                     steps {
                         script {
-                            def components = ['projet-isa-devops-20-team-b-20-shipment-component','projet-isa-devops-20-team-b-20-schedule-component','projet-isa-devops-20-team-b-20-drone-park-component','projet-isa-devops-20-team-b-20-warehouse-component']
+                            def components = ['projet-isa-devops-20-team-b-20-shipment-component','projet-isa-devops-20-team-b-20-schedule-component','projet-isa-devops-20-team-b-20-drone-park-component','projet-isa-devops-20-team-b-20-warehouse-component', 'projet-isa-devops-20-team-b-20-invoice-component','projet-isa-devops-20-team-b-20-statistics-component', 'projet-isa-devops-20-team-b-20-web-service']
                             for (int i = 0; i < components.size(); ++i) {
                                 echo "Check dependency on ${components[i]}"
                                 build job: "${components[i]}/develop",
