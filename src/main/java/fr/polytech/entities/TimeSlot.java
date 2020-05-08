@@ -23,9 +23,6 @@ public class TimeSlot implements Comparable<TimeSlot>, Serializable {
     @NotNull
     private GregorianCalendar date;
 
-    @ManyToOne
-    private Drone drone;
-
     @NotNull
     @Enumerated(EnumType.STRING)
     private TimeState state;
@@ -40,14 +37,6 @@ public class TimeSlot implements Comparable<TimeSlot>, Serializable {
     public TimeSlot(GregorianCalendar date, TimeState timeState) {
         this.date = date;
         this.state = timeState;
-    }
-
-    public Drone getDrone() {
-        return drone;
-    }
-
-    public void setDrone(Drone drone) {
-        this.drone = drone;
     }
 
     public int getId() {
@@ -91,7 +80,6 @@ public class TimeSlot implements Comparable<TimeSlot>, Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (getDrone() == null ? 0 : getDrone().getDroneId().hashCode());
         result = prime * result + (getDate() == null ? 0 : getDate().hashCode());
         result = prime * result + (getState() == null ? 0 : getState().hashCode());
         result = prime * result + (getDelivery() == null ? 0 : getDelivery().hashCode());
@@ -110,10 +98,6 @@ public class TimeSlot implements Comparable<TimeSlot>, Serializable {
         if (getDate() != null ? !getDate().equals(other.getDate()) : other.getDate() != null) {
             return false;
         }
-        if (getDrone() != null ? !getDrone().getDroneId().equals(other.getDrone().getDroneId())
-                : other.getDrone() != null) {
-            return false;
-        }
         if (getDelivery() != null ? !getDelivery().getDeliveryId().equals(other.getDelivery().getDeliveryId())
                 : other.getDelivery() != null) {
             return false;
@@ -128,8 +112,6 @@ public class TimeSlot implements Comparable<TimeSlot>, Serializable {
             result += "date: " + date.getTime().toString();
         if (state != null)
             result += ", state: " + state;
-        if (drone != null)
-            result += "drone: " + drone.getDroneId();
         if (delivery != null)
             result += ", delivery: " + delivery.getDeliveryId();
         return result;

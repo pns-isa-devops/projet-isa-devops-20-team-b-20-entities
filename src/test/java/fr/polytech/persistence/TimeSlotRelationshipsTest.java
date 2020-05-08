@@ -48,12 +48,10 @@ public class TimeSlotRelationshipsTest extends AbstractEntitiesTest {
     public void ManyToOneDrone(){
         Drone drone = new Drone("123");
         entityManager.persist(drone);
-        timeSlot.setDrone(drone);
 
      //   entityManager.persist(timeSlot);
 
         TimeSlot timeSlotStored = entityManager.merge(timeSlot);
-        assertEquals(drone, timeSlotStored.getDrone());
     }
 
     @Test

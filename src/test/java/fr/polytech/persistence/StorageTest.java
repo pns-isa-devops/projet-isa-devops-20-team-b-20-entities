@@ -298,8 +298,6 @@ public class StorageTest extends AbstractEntitiesTest {
         Drone dr2 = new Drone("124");
         entityManager.persist(dr2);
 
-        stored.setDrone(dr2);
-
         assertNotNull(entityManager.find(Drone.class, dr.getId()));
         assertNotNull(entityManager.find(Drone.class, dr2.getId()));
     }

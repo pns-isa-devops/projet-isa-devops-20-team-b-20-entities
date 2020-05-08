@@ -93,7 +93,6 @@ public class DeliveryRelationshipsTest extends AbstractEntitiesTest {
         manual.begin();
         TimeSlot ts1 = new TimeSlot(new GregorianCalendar(), TimeState.DELIVERY);
         delivery = entityManager.find(Delivery.class, delivery.getId());
-        ts1.setDrone(delivery.getDrone());
         entityManager.persist(ts1);
         delivery.getDrone().add(ts1);
         manual.commit();

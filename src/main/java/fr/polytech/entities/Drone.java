@@ -26,7 +26,7 @@ public class Drone implements Serializable {
     @OneToOne(cascade = CascadeType.MERGE)
     private Delivery currentDelivery;
 
-    @OneToMany(cascade = { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "drone")
+    @OneToMany(cascade = { CascadeType.REMOVE, CascadeType.MERGE })
     private Set<TimeSlot> timeSlots;
 
     @Enumerated(EnumType.STRING)
@@ -174,7 +174,7 @@ public class Drone implements Serializable {
         if (droneStatus != null)
             result += ", status: " + droneStatus;
         if (timeSlots != null)
-            result += ", timeslots: " + timeSlots;
+            result += ", timeslots size : " + timeSlots.size();
         if (droneInformation != null)
             result += ", droneInformation : " + droneInformation;
 
