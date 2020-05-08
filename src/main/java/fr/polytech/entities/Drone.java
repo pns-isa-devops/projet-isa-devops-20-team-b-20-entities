@@ -1,9 +1,11 @@
 package fr.polytech.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -26,14 +28,14 @@ public class Drone implements Serializable {
     @OneToOne(cascade = CascadeType.MERGE)
     private Delivery currentDelivery;
 
-    @OneToMany(cascade = { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "drone")
-    private Set<TimeSlot> timeSlots;
+    @ElementCollection
+    private List<TimeSlot> timeSlots = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    private DroneStatus droneStatus;
+    private DroneStatus droneStatus = DroneStatus.AVAILABLE;
 
-    @OneToMany(cascade = { CascadeType.REMOVE, CascadeType.MERGE, CascadeType.PERSIST }, mappedBy = "drone")
-    private Set<DroneInformation> droneInformation;
+    @ElementCollection
+    private Set<DroneInformation> droneInformation = new HashSet<>();
 
     private int flightTime;
 
@@ -60,8 +62,6 @@ public class Drone implements Serializable {
     public Drone(String id) {
         this.droneId = id;
         this.droneStatus = DroneStatus.AVAILABLE;
-        timeSlots = new HashSet<>();
-        droneInformation = new HashSet<>();
         this.flightTime = 0;
     }
 
@@ -115,11 +115,15 @@ public class Drone implements Serializable {
 
     }
 
-    public Set<TimeSlot> getTimeSlots() {
+    public void setDroneInformation(Set<DroneInformation> droneInformation) {
+        this.droneInformation = droneInformation;
+    }
+
+    public List<TimeSlot> getTimeSlots() {
         return timeSlots;
     }
 
-    public void setTimeSlots(Set<TimeSlot> timeSlots) {
+    public void setTimeSlots(List<TimeSlot> timeSlots) {
         this.timeSlots = timeSlots;
     }
 

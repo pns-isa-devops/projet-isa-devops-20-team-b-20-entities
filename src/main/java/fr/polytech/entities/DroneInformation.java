@@ -16,24 +16,17 @@ public class DroneInformation implements Serializable {
     @NotNull
     private GregorianCalendar date;
 
-
     @NotNull
     private double occupationRate;
 
-    @NotNull
-    @ManyToOne
-    private Drone drone;
-
-    public DroneInformation(){
+    public DroneInformation() {
 
     }
-    public DroneInformation(GregorianCalendar date, Drone drone){
-        this.drone = drone;
+
+    public DroneInformation(GregorianCalendar date) {
         this.date = date;
         this.occupationRate = 0.0;
-
     }
-
 
     public int getId() {
         return id;
@@ -51,14 +44,6 @@ public class DroneInformation implements Serializable {
         this.date = date;
     }
 
-    public Drone getDrone() {
-        return drone;
-    }
-
-    public void setDrone(Drone drone) {
-        this.drone = drone;
-    }
-
     public double getOccupationRate() {
         return occupationRate;
     }
@@ -67,13 +52,11 @@ public class DroneInformation implements Serializable {
         this.occupationRate = occupationRate;
     }
 
-
     @Override
     public int hashCode() {
         final int prime = 42;
         int result = 1;
         result = prime * result + (getDate() != null ? getDate().hashCode() : 0);
-        result = prime * result + (getDrone() != null ? getDrone().hashCode() : 0);
         return result;
     }
 
@@ -89,10 +72,6 @@ public class DroneInformation implements Serializable {
         if (getDate() != null ? !getDate().equals(other.getDate()) : other.getDate() != null) {
             return false;
         }
-        if (getDrone() != null ? !getDrone().getDroneId().equals(other.getDrone().getDroneId())
-                : other.getDrone() != null) {
-            return false;
-        }
         return getOccupationRate() == other.getOccupationRate();
 
     }
@@ -102,10 +81,7 @@ public class DroneInformation implements Serializable {
         String result = getClass().getSimpleName() + " ";
         if (date != null)
             result += "date: " + date.getTime().toString();
-        if (drone != null)
-            result += ", drone: " + drone.getDroneId();
         result += ", occupationRate: " + occupationRate;
-
         return result;
     }
 

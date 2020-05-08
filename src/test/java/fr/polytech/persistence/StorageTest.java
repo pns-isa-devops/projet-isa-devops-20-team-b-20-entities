@@ -3,9 +3,9 @@ package fr.polytech.persistence;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -158,19 +158,12 @@ public class StorageTest extends AbstractEntitiesTest {
         TimeSlot t = new TimeSlot(new GregorianCalendar(), TimeState.REVIEW);
         Drone dr = new Drone("123");
         dr.add(t);
-        entityManager.persist(t);
         entityManager.persist(dr);
 
-        TimeSlot storedT = (TimeSlot) entityManager.find(TimeSlot.class, t.getId());
         Drone storedD = (Drone) entityManager.find(Drone.class, dr.getId());
 
         assertEquals(1, storedD.getTimeSlots().size());
-        assertEquals(TimeState.REVIEW, storedT.getState());
         assertEquals(TimeState.REVIEW, storedD.getTimeSlots().iterator().next().getState());
-
-        storedT.setState(TimeState.DELIVERY);
-        assertEquals(TimeState.DELIVERY, storedT.getState());
-        assertEquals(TimeState.DELIVERY, storedD.getTimeSlots().iterator().next().getState());
     }
 
     @Test
@@ -178,17 +171,16 @@ public class StorageTest extends AbstractEntitiesTest {
         TimeSlot t = new TimeSlot(new GregorianCalendar(), TimeState.REVIEW);
         Drone dr = new Drone("123");
         dr.add(t);
-        entityManager.persist(t);
         entityManager.persist(dr);
 
         assertEquals(1, dr.getTimeSlots().size());
 
-        assertNotNull(entityManager.find(TimeSlot.class, t.getId()));
-        assertNotNull(entityManager.find(Drone.class, dr.getId()));
+        Drone stored = entityManager.find(Drone.class, dr.getId());
+        assertNotNull(stored);
+        assertFalse(stored.getTimeSlots().isEmpty());
 
         entityManager.remove(dr);
 
-        assertNull(entityManager.find(TimeSlot.class, t.getId()));
         assertNull(entityManager.find(Drone.class, dr.getId()));
     }
 
@@ -305,8 +297,6 @@ public class StorageTest extends AbstractEntitiesTest {
         Drone dr2 = new Drone("124");
         entityManager.persist(dr2);
 
-        stored.setDrone(dr2);
-
         assertNotNull(entityManager.find(Drone.class, dr.getId()));
         assertNotNull(entityManager.find(Drone.class, dr2.getId()));
     }
@@ -363,7 +353,7 @@ public class StorageTest extends AbstractEntitiesTest {
         entityManager.persist(dr);
         dr = entityManager.merge(dr);
 
-        DroneInformation droneInformation = new DroneInformation(new GregorianCalendar(2020, 11, 27), dr);
+        DroneInformation droneInformation = new DroneInformation(new GregorianCalendar(2020, 11, 27));
         assertEquals(0, droneInformation.getId());
         entityManager.persist(droneInformation);
         int id = droneInformation.getId();
@@ -385,7 +375,7 @@ public class StorageTest extends AbstractEntitiesTest {
         entityManager.persist(dr);
         dr = entityManager.merge(dr);
 
-        DroneInformation droneInformation = new DroneInformation(new GregorianCalendar(2020, 11, 27), dr);
+        DroneInformation droneInformation = new DroneInformation(new GregorianCalendar(2020, 11, 27));
         entityManager.persist(droneInformation);
 
         // Occupation rate
@@ -402,18 +392,6 @@ public class StorageTest extends AbstractEntitiesTest {
         DroneInformation stored3 = entityManager.merge(droneInformation);
         assertEquals(new GregorianCalendar(2020, 11, 28), stored3.getDate());
 
-        // Drone
-        Drone dr2 = new Drone("234");
-        entityManager.persist(dr2);
-        dr2 = entityManager.merge(dr2);
-
-        assertNotEquals(dr2, stored3.getDrone());
-        stored3.setDrone(dr2);
-        entityManager.persist(stored3);
-        DroneInformation stored4 = entityManager.merge(stored3);
-
-        assertEquals(dr2, stored4.getDrone());
-
     }
 
     @Test
@@ -422,7 +400,7 @@ public class StorageTest extends AbstractEntitiesTest {
         entityManager.persist(dr);
         dr = entityManager.merge(dr);
 
-        DroneInformation droneInformation = new DroneInformation(new GregorianCalendar(2020, 11, 27), dr);
+        DroneInformation droneInformation = new DroneInformation(new GregorianCalendar(2020, 11, 27));
         entityManager.persist(droneInformation);
         droneInformation = entityManager.merge(droneInformation);
         entityManager.remove(droneInformation);

@@ -6,6 +6,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +28,7 @@ public class Delivery implements Serializable {
     @Pattern(regexp = "([A-Z 0-9]){10}+", message = "Invalid delivery id")
     private String deliveryId;
 
-    @OneToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @OneToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, fetch = FetchType.LAZY)
     private Drone drone;
 
     @NotNull

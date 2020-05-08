@@ -1,12 +1,9 @@
 package fr.polytech.persistence;
 
-
 import java.util.GregorianCalendar;
-
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -37,27 +34,14 @@ public class TimeSlotRelationshipsTest extends AbstractEntitiesTest {
 
     private TimeSlot timeSlot;
 
-
     @Before
-    public void SetUp(){
+    public void SetUp() {
         timeSlot = new TimeSlot(new GregorianCalendar(2020, 11, 11), TimeState.DELIVERY);
         entityManager.persist(timeSlot);
     }
 
     @Test
-    public void ManyToOneDrone(){
-        Drone drone = new Drone("123");
-        entityManager.persist(drone);
-        timeSlot.setDrone(drone);
-
-     //   entityManager.persist(timeSlot);
-
-        TimeSlot timeSlotStored = entityManager.merge(timeSlot);
-        assertEquals(drone, timeSlotStored.getDrone());
-    }
-
-    @Test
-    public void OneToOneDelivery(){
+    public void OneToOneDelivery() {
         Parcel p = new Parcel("AAAABBBBCC", "add1", "car1", "cust1");
         entityManager.persist(p);
 
@@ -69,7 +53,7 @@ public class TimeSlotRelationshipsTest extends AbstractEntitiesTest {
 
         TimeSlot tsStored = entityManager.merge(timeSlot);
 
-        assertEquals(de,tsStored.getDelivery());
+        assertEquals(de, tsStored.getDelivery());
 
     }
 }
