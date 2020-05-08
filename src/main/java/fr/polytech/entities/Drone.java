@@ -115,10 +115,6 @@ public class Drone implements Serializable {
 
     }
 
-    public void setDroneInformation(Set<DroneInformation> droneInformation) {
-        this.droneInformation = droneInformation;
-    }
-
     public Set<TimeSlot> getTimeSlots() {
         return timeSlots;
     }
