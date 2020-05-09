@@ -172,8 +172,7 @@ public class Drone implements Serializable {
         if (timeSlots != null)
             result += ", timeslots: " + timeSlots;
         if (droneInformation != null)
-            result += ", droneInformation : " + droneInformation;
-
+            result += ", drone information : " + droneInformation;
         result += ", flight time: " + flightTime;
         return result;
     }
