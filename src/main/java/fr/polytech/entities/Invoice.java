@@ -2,6 +2,7 @@ package fr.polytech.entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -14,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import javax.validation.constraints.Pattern;
 
 @Entity
@@ -36,6 +38,12 @@ public class Invoice implements Serializable {
     private float price;
 
     @NotNull
+    private GregorianCalendar emissionDate;
+
+    @Null
+    private GregorianCalendar paymentDate;
+
+    @NotNull
     @Enumerated(EnumType.STRING)
     private InvoiceStatus status;
 
@@ -43,6 +51,23 @@ public class Invoice implements Serializable {
         deliveries = new ArrayList<>();
         price = 0;
         status = InvoiceStatus.NOT_PAID;
+        emissionDate = new GregorianCalendar();
+    }
+
+    public GregorianCalendar getEmissionDate() {
+        return this.emissionDate;
+    }
+
+    public void setEmissionDate(GregorianCalendar emissionDate) {
+        this.emissionDate = emissionDate;
+    }
+
+    public GregorianCalendar getPaymentDate() {
+        return this.paymentDate;
+    }
+
+    public void setPaymentDate(GregorianCalendar paymentDate) {
+        this.paymentDate = paymentDate;
     }
 
     public String getInvoiceId() {
