@@ -79,7 +79,7 @@ public class DeliveryRelationshipsTest extends AbstractEntitiesTest {
         manual.begin();
         delivery = entityManager.find(Delivery.class, delivery.getId());
         Drone drone = new Drone("123");
-        entityManager.merge(drone);
+        drone = entityManager.merge(drone);
         delivery.setDrone(drone);
         manual.commit();
 

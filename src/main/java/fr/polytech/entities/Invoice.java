@@ -19,9 +19,6 @@ import javax.validation.constraints.Pattern;
 @Entity
 public class Invoice implements Serializable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
     @Id
