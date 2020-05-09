@@ -25,7 +25,7 @@ public class Drone implements Serializable {
     @Pattern(regexp = "([A-Z 0-9]){3}+", message = "Invalid drone id")
     private String droneId;
 
-    @OneToOne(cascade = CascadeType.MERGE)
+    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private Delivery currentDelivery;
 
     @ElementCollection
